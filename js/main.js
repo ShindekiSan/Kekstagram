@@ -38,13 +38,26 @@ const getRandomInteger = (min, max) => {
 }
 
 const getRandomElementFromList = (list) => {
-    return list[getRandomInteger(0, list.length - 1)]
+   return list[getRandomInteger(0, list.length - 1)]
 }
 
 const removeElementsFromList = (list) => {
     while (list.firstChild) {
         list.removeChild(list.firstChild)
     }
+}
+
+const generateSocialComments = () => {
+    const maxCommentsAmount = getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
+
+    for (var i=0; i < maxCommentsAmount; i++) {
+        socialComments.push({
+            avatar: `img/avatar-${getRandomInteger(MIN_AVATAR_COUNT, MAX_AVATAR_COUNT)}.svg`,
+            text: getRandomElementFromList(COMMENTS),
+            name: getRandomElementFromList(NAMES),
+        })
+    }
+    return maxCommentsAmount;
 }
 
 const createPhotosList = () => {
@@ -58,7 +71,8 @@ const createPhotosList = () => {
         photos.push({
             url: `photos/${i+1}.jpg`,
             likes: getRandomInteger(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
-            comment: getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT),
+            comments: generateSocialComments(),
+            description: getRandomElementFromList(DESCRIPTION),
         })
     }
 
@@ -67,7 +81,7 @@ const createPhotosList = () => {
     for(var i=0; i < photos.length; i++) {
         photosListElementTemplate.querySelector('.picture__img').setAttribute('src', photos[i].url);
         photosListElementTemplate.querySelector('.picture__likes').textContent = photos[i].likes;
-        photosListElementTemplate.querySelector('.picture__comments').textContent = photos[i].comment;
+        photosListElementTemplate.querySelector('.picture__comments').textContent = photos[i].comments;
         var photosElement = photosListElementTemplate.cloneNode(true);
         photosFragment.appendChild(photosElement);
     }
@@ -81,16 +95,6 @@ const showBigPicture = () => {
     const photoBigPicture = document.querySelector('.big-picture');
     const socialComment = document.querySelector('.social__comment');
 
-    // Generate comments
-
-    for (var i=0; i < BIG_PICTURE_COMMENTS_COUNT; i++) {
-        socialComments.push({
-            avatar: `img/avatar-${getRandomInteger(MIN_AVATAR_COUNT, MAX_AVATAR_COUNT)}.svg`,
-            text: getRandomElementFromList(COMMENTS),
-            name: getRandomElementFromList(NAMES),
-        })
-    }
-    
     // Big picture
 
     photoBigPicture.classList.remove('hidden');
@@ -105,8 +109,8 @@ const showBigPicture = () => {
 
     // Photo Description
 
-    socialPhotoDescription.querySelector('.social__picture').setAttribute('src', socialComments[Math.floor(Math.random() * socialComments.length)].avatar);
-    socialPhotoDescription.querySelector('.social__caption').textContent = DESCRIPTION[Math.floor(Math.random() * DESCRIPTION.length)];
+    socialPhotoDescription.querySelector('.social__picture').setAttribute('src', getRandomElementFromList(socialComments).avatar);
+    socialPhotoDescription.querySelector('.social__caption').textContent = getRandomElementFromList(DESCRIPTION);
 
     // Remove HTML Comments
 
@@ -114,7 +118,7 @@ const showBigPicture = () => {
 
     // Comments
 
-    for (var i=0; i < socialComments.length; i++) {
+    for (var i=0; i < BIG_PICTURE_COMMENTS_COUNT; i++) {
         var newSocialComment = socialComment.cloneNode(true);
         newSocialComment.querySelector('.social__picture').setAttribute('src', socialComments[i].avatar);
         newSocialComment.querySelector('.social__text').textContent = socialComments[i].text;
@@ -123,7 +127,6 @@ const showBigPicture = () => {
 }
 
 createPhotosList();
-showBigPicture();
 
 
 
