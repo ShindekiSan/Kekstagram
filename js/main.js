@@ -230,6 +230,7 @@ const uploadPhotoOverlayCloseButton = uploadPhotoOverlay.querySelector('.img-upl
 const effectPin = document.querySelector('.effect-level__pin');
 const effectsList = document.querySelector('.effects__list');
 const effectsRadio = document.getElementsByName('effect');
+const effectLevelPanel = document.querySelector('.img-upload__effect-level');
 
 const uploadImage = document.querySelector('.img-upload__preview').querySelector('img');
 
@@ -240,12 +241,22 @@ const effectLevel = () => {
 const getEffect = () => {
     for (var i=0; i < effectsRadio.length; i++) {
         if (effectsRadio[i].checked) {
-            if (effectsRadio[i].getAttribute('value') != currentEffect) {
+            if (effectsRadio[i].getAttribute('value') === 'none') {
+                effectLevelPanel.classList.add('hidden');
                 currentEffect = effectsRadio[i].getAttribute('value');
-                if (currentEffectPinPosition !== MAX_EFFECT_POSITION) {
-                    currentEffectPinPosition  = MAX_EFFECT_POSITION;
-                };
-                effectLevel();
+                setEffect();
+            }
+            else {
+                if (effectsRadio[i].getAttribute('value') !== currentEffect && effectsRadio[i].getAttribute('value') !== 'none') {
+                    if (effectLevelPanel.classList.contains('hidden')) {
+                        effectLevelPanel.classList.remove('hidden');
+                    }
+                    currentEffect = effectsRadio[i].getAttribute('value');
+                    if (currentEffectPinPosition !== MAX_EFFECT_POSITION) {
+                        currentEffectPinPosition  = MAX_EFFECT_POSITION;
+                    };
+                    effectLevel();
+                }
             }
         }
     }
