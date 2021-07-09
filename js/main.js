@@ -148,7 +148,7 @@ const createPhotosList = () => {
     }
 
     const onPhotosListElementEnterPress = (evt) => {
-        if (evt.keyCode === 13) {  
+        if (evt.keyCode === 13 && evt.target.tagName === 'A') {  
             for (var i=0; i < PHOTOS_COUNT; i++) {
                 if (evt.target.firstElementChild.getAttribute('src') === photos[i].url) {
                     bigPicturePhotoIndex = i;
@@ -233,6 +233,9 @@ const effectsRadio = document.getElementsByName('effect');
 const effectLevelPanel = document.querySelector('.img-upload__effect-level');
 
 const uploadImage = document.querySelector('.img-upload__preview').querySelector('img');
+
+const uploadPhotoComment = document.querySelector('.text__description');
+const uploadPhotoHashTags = document.querySelector('.text__hashtags');
 
 const effectLevel = () => {
     currentEffectLevel = ((effects[currentEffect].maxValue - effects[currentEffect].minValue)/MAX_EFFECT_POSITION) * currentEffectPinPosition + effects[currentEffect].minValue;
