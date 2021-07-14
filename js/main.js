@@ -74,9 +74,12 @@ const effects = {
 }
 
 let bigPicturePhotoIndex = 0;
+
 let currentEffectLevel = 0;
 let currentEffect = 'none';
 let currentEffectPinPosition = MAX_EFFECT_POSITION;
+
+let hashTags = [];
 
 const getRandomInteger = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -222,8 +225,11 @@ const showBigPicture = () => {
 
 createPhotosList();
 
-const uploadPhotoButton = document.querySelector('.img-upload__input')
+
+const uploadForm = document.querySelector('.img-upload__form')
+const uploadPhotoButton = document.querySelector('.img-upload__input');
 const uploadPhotoOverlay = document.querySelector('.img-upload__overlay');
+const uploadPhotoOverlayPostButton = document.querySelector('.img-upload__submit');
 const uploadInput = document.querySelector('#upload__file');
 const uploadPhotoOverlayCloseButton = uploadPhotoOverlay.querySelector('.img-upload__cancel');
 
@@ -280,7 +286,11 @@ const onUploadPhotoOverlayCloseButtonClick = () => {
 
 const onUploadPhotoOverlayEscPress = (evt) => {
     if (evt.keyCode === 27) {
-        closeUploadOverlay();
+        if (uploadPhotoHashTags === document.activeElement || uploadPhotoComment === document.activeElement) {
+            document.activeElement.blur();
+        } else {
+            closeUploadOverlay();
+        }
     }
 }
 
@@ -296,6 +306,7 @@ const onUploadButtonClick = () => {
 
 const showUploadOverlay = () => {
     uploadPhotoOverlay.classList.remove('hidden'); 
+    uploadPhotoButton.blur();
     
     document.addEventListener('keydown', onUploadPhotoOverlayEscPress);
     uploadPhotoOverlayCloseButton.addEventListener('click', onUploadPhotoOverlayCloseButtonClick);
@@ -309,12 +320,63 @@ uploadPhotoButton.addEventListener('click', onUploadButtonClick);
 const closeUploadOverlay = () => {
     uploadPhotoOverlay.classList.add('hidden');
     uploadImage.style.filter = '';
-    uploadPhotoButton.blur();
+    hashTags = [];
+    uploadPhotoHashTags.value = '';
 
     document.removeEventListener('keydown', onUploadPhotoOverlayEscPress);
     
     document.removeEventListener('click', onUploadPhotoOverlayCloseButtonClick);
 };
+
+const onHashTagsChange = () => {
+    hashTags = uploadPhotoHashTags.value.split(' '); 
+    for (var i=0; i < hashTags.length; i++) {
+        if (hashTags[i] === '') {
+            hashTags.splice(i,1);
+        } else {
+            hashTags[i] = hashTags[i].toLowerCase();
+        }
+    } 
+    console.log(hashTags); 
+}
+
+const countHashTags = (hashTag) => {
+    var count = 0
+    for (var i=0; i < hashTags.length; i++) {
+        if (hashTags[i] === hashTag) {
+            count = count + 1;
+        }
+    }
+    return count
+}
+
+const hashTagsValidityChecking = () => {
+    if (hashTags.length > 5) {
+        uploadPhotoHashTags.setCustomValidity('Не может быть больше 5 хэш-тегов');
+    } else if (hashTags.length === 0) {
+        uploadPhotoHashTags.setCustomValidity('');
+    } else {
+        for (var i=0; i < hashTags.length; i++) {
+            if (hashTags[i][0] !== '#') {
+                uploadPhotoHashTags.setCustomValidity('Хэш-теги должны начинаться с решётки');
+            } else if (hashTags[i] === '#') {
+                uploadPhotoHashTags.setCustomValidity('Хэш-теги не могут состоять только из решетки');
+            } else if ((hashTags[i].split('#').length - 1) > 1) {
+                uploadPhotoHashTags.setCustomValidity('Хэш-теги должны разделяться пробелами');
+            } else if (hashTags[i].length > 20) {
+                uploadPhotoHashTags.setCustomValidity('Хэш-тег не должен быть длиннее 20 символов');
+            } else if (countHashTags(hashTags[i]) > 1 ) {
+                uploadPhotoHashTags.setCustomValidity('Не должно быть повторяющихся хэш-тегов(#ХэшТег = #хэштег)');
+            } else {
+                uploadPhotoHashTags.setCustomValidity('');
+            }
+        }
+    }
+}
+
+uploadPhotoHashTags.addEventListener('change', onHashTagsChange);
+uploadPhotoOverlayPostButton.addEventListener('click', hashTagsValidityChecking);
+
 
 
 
