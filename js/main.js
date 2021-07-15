@@ -321,7 +321,6 @@ const showUploadOverlay = () => {
     pinOffset = effectPin.offsetLeft;
     depthWidth = effectDepth.clientWidth;
     effectLevelPanel.classList.add('hidden');
-    console.log(pinOffset, depthWidth);
     
     document.addEventListener('keydown', onUploadPhotoOverlayEscPress);
     uploadPhotoOverlayCloseButton.addEventListener('click', onUploadPhotoOverlayCloseButtonClick);
