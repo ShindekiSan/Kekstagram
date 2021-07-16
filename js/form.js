@@ -50,7 +50,8 @@
 
     let hashTags = [];
 
-    const uploadPhotoButton = document.querySelector('.img-upload__input');
+    const uploadPhotoButton = document.querySelector('.img-upload__label');
+    const uploadPhotoInput = document.querySelector('.img-upload__input');
     const uploadPhotoOverlay = document.querySelector('.img-upload__overlay');
     const uploadPhotoOverlayPostButton = document.querySelector('.img-upload__submit');
     const uploadPhotoOverlayCloseButton = uploadPhotoOverlay.querySelector('.img-upload__cancel');
@@ -106,6 +107,7 @@
         effectsList.addEventListener('click', getEffect);
     };
 
+    uploadPhotoInput.addEventListener('keydown', onUploadButtonEnterPress);
     uploadPhotoButton.addEventListener('keydown', onUploadButtonEnterPress);
     uploadPhotoButton.addEventListener('click', onUploadButtonClick);
 
