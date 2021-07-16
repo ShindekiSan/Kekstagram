@@ -112,6 +112,7 @@
     uploadPhotoButton.addEventListener('click', onUploadButtonClick);
 
     const closeUploadOverlay = () => {
+        uploadPhotoInput.value = '';
         uploadPhotoOverlay.classList.add('hidden');
         uploadImage.style.filter = '';
         hashTags = [];
