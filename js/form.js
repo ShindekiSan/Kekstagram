@@ -127,7 +127,7 @@
 
     const onHashTagsChange = () => {
         hashTags = uploadPhotoHashTags.value.split(' '); 
-        for (var i=0; i < hashTags.length; i++) {
+        for (let i=0; i < hashTags.length; i++) {
             if (hashTags[i] === '') {
                 hashTags.splice(i,1);
             } else {
@@ -138,8 +138,8 @@
     };
 
     const countHashTags = (hashTag) => {
-        var count = 0;
-        for (var i=0; i < hashTags.length; i++) {
+        let count = 0;
+        for (let i=0; i < hashTags.length; i++) {
             if (hashTags[i] === hashTag) {
                 count = count + 1;
             };
@@ -153,7 +153,7 @@
         } else if (hashTags.length === 0) {
             uploadPhotoHashTags.setCustomValidity('');
         } else {
-            for (var i=0; i < hashTags.length; i++) {
+            for (let i=0; i < hashTags.length; i++) {
                 if (hashTags[i][0] !== '#') {
                     uploadPhotoHashTags.setCustomValidity('Хэш-теги должны начинаться с решётки');
                 } else if (hashTags[i] === '#') {
@@ -181,7 +181,7 @@
     };
 
     const getEffect = () => {
-        for (var i=0; i < effectsRadio.length; i++) {
+        for (let i=0; i < effectsRadio.length; i++) {
             if (effectsRadio[i].checked) {
                 if (effectsRadio[i].getAttribute('value') === 'none') {
                     effectLevelPanel.classList.add('hidden');
@@ -220,15 +220,15 @@
     // Drag-n-drop for effect pin
 
     const onMouseDown = (evt) => {
-        var pinCoords = evt.clientX;
+        let pinCoords = evt.clientX;
 
         const onPinMouseMove = (moveEvt) => {
-            var pinShift = pinCoords - moveEvt.clientX;
+            let pinShift = pinCoords - moveEvt.clientX;
 
             pinCoords = moveEvt.clientX;
 
-            var currentOffset = effectPin.offsetLeft - pinShift;
-            var currentDepthWidth = effectDepth.clientWidth - pinShift;
+            let currentOffset = effectPin.offsetLeft - pinShift;
+            let currentDepthWidth = effectDepth.clientWidth - pinShift;
 
             effectPin.style.left = currentOffset + 'px';
             effectDepth.style.width = currentDepthWidth + 'px';
@@ -250,12 +250,12 @@
         };
 
         const onPinMouseUp = (moveEvt) => {
-            var pinShift = pinCoords - moveEvt.clientX;
+            let pinShift = pinCoords - moveEvt.clientX;
 
             pinCoords = moveEvt.clientX;
 
-            var currentOffset = effectPin.offsetLeft - pinShift;
-            var currentDepthWidth = effectDepth.clientWidth - pinShift;
+            let currentOffset = effectPin.offsetLeft - pinShift;
+            let currentDepthWidth = effectDepth.clientWidth - pinShift;
 
             effectPin.style.left = currentOffset + 'px';
             effectDepth.style.width = currentDepthWidth + 'px';

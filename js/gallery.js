@@ -42,7 +42,7 @@
         const maxCommentsAmount = window.utils.getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
 
     var photoComments = [];
-        for (var i=0; i < maxCommentsAmount; i++) {
+        for (let i=0; i < maxCommentsAmount; i++) {
             photoComments.push({
                 index: photoIndex,
                 avatar: `img/avatar-${window.utils.getRandomInteger(MIN_AVATAR_COUNT, MAX_AVATAR_COUNT)}.svg`,
@@ -61,7 +61,7 @@
 
         // Generate photos
     
-        for (var i=0; i < PHOTOS_COUNT; i++) {
+        for (let i=0; i < PHOTOS_COUNT; i++) {
             photos.push({
                 url: `photos/${i+1}.jpg`,
                 likes: window.utils.getRandomInteger(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
@@ -73,11 +73,11 @@
 
         // Show photos
 
-        for(var i=0; i < photos.length; i++) {
+        for(let i=0; i < photos.length; i++) {
             photosListElementTemplate.querySelector('.picture__img').setAttribute('src', photos[i].url);
             photosListElementTemplate.querySelector('.picture__likes').textContent = photos[i].likes;
             photosListElementTemplate.querySelector('.picture__comments').textContent = photos[i].comments;
-            var photosElement = photosListElementTemplate.cloneNode(true);
+            let photosElement = photosListElementTemplate.cloneNode(true);
             photosFragment.appendChild(photosElement);
         };
 
@@ -86,7 +86,7 @@
         // Show big picture
 
         const onPhotosListElementClick = (evt) => {
-            for (var i=0; i < PHOTOS_COUNT; i++) {
+            for (let i=0; i < PHOTOS_COUNT; i++) {
                 if (evt.target.getAttribute('src') === photos[i].url) {
                     bigPicturePhotoIndex = i;
                     showBigPicture();
@@ -97,7 +97,7 @@
 
         const onPhotosListElementEnterPress = (evt) => {
             if (window.utils.isEnterKeycode(evt) && evt.target.tagName === 'A') {  
-                for (var i=0; i < PHOTOS_COUNT; i++) {
+                for (let i=0; i < PHOTOS_COUNT; i++) {
                     if (evt.target.firstElementChild.getAttribute('src') === photos[i].url) {
                         bigPicturePhotoIndex = i;
                         showBigPicture();
@@ -159,8 +159,8 @@
         window.utils.removeElementsFromList(socialCommentsSection);
 
         // Comments
-        for (var i=0; i < BIG_PICTURE_COMMENTS_COUNT; i++) {
-            var newSocialComment = socialComment.cloneNode(true);
+        for (let i=0; i < BIG_PICTURE_COMMENTS_COUNT; i++) {
+            let newSocialComment = socialComment.cloneNode(true);
             newSocialComment.querySelector('.social__picture').setAttribute('src', socialComments[bigPicturePhotoIndex][i].avatar);
             newSocialComment.querySelector('.social__text').textContent = socialComments[bigPicturePhotoIndex][i].text;
             socialCommentsSection.appendChild(newSocialComment);
