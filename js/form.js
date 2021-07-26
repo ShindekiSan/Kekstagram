@@ -84,32 +84,21 @@
         };
     };
 
-    const onUploadButtonEnterPress = (evt) => {
-        if (window.utils.isEnterKeycode(evt)) {
-            showUploadOverlay();
-        };
-    };
+    const showUploadPhotoOverlay = () => {
+        uploadPhotoOverlay.classList.remove('hidden');
+        effectLevelPanel.classList.add('visually-hidden');
+        
+        uploadPhotoInput.blur();
 
-    const onUploadButtonClick = () => {
-        showUploadOverlay();
-    };
-
-    const showUploadOverlay = () => {
-        uploadPhotoOverlay.classList.remove('hidden'); 
-        uploadPhotoButton.blur();
-    
         pinOffset = effectPin.offsetLeft;
         depthWidth = effectDepth.clientWidth;
-        effectLevelPanel.classList.add('hidden');
     
         document.addEventListener('keydown', onUploadPhotoOverlayEscPress);
         uploadPhotoOverlayCloseButton.addEventListener('click', onUploadPhotoOverlayCloseButtonClick);
         effectsList.addEventListener('click', getEffect);
     };
 
-    uploadPhotoInput.addEventListener('keydown', onUploadButtonEnterPress);
-    uploadPhotoButton.addEventListener('keydown', onUploadButtonEnterPress);
-    uploadPhotoButton.addEventListener('click', onUploadButtonClick);
+    uploadPhotoInput.addEventListener('change', showUploadPhotoOverlay)
 
     const closeUploadOverlay = () => {
         uploadPhotoInput.value = '';
@@ -119,7 +108,6 @@
         uploadPhotoHashTags.value = '';
 
         document.removeEventListener('keydown', onUploadPhotoOverlayEscPress);
-    
         document.removeEventListener('click', onUploadPhotoOverlayCloseButtonClick);
     };
 
@@ -184,14 +172,14 @@
         for (let i=0; i < effectsRadio.length; i++) {
             if (effectsRadio[i].checked) {
                 if (effectsRadio[i].getAttribute('value') === 'none') {
-                    effectLevelPanel.classList.add('hidden');
+                    effectLevelPanel.classList.add('visually-hidden');
                     currentEffect = effectsRadio[i].getAttribute('value');
                     effectValue.setAttribute('value', `${effects[currentEffect].filterName}`);
                 }
                 else {
                     if (effectsRadio[i].getAttribute('value') !== currentEffect && effectsRadio[i].getAttribute('value') !== 'none') {
-                        if (effectLevelPanel.classList.contains('hidden')) {
-                            effectLevelPanel.classList.remove('hidden');
+                        if (effectLevelPanel.classList.contains('visually-hidden')) {
+                            effectLevelPanel.classList.remove('visually-hidden');
                         }
                         currentEffect = effectsRadio[i].getAttribute('value');
                         if (currentEffectPinPosition !== MAX_EFFECT_POSITION) {
