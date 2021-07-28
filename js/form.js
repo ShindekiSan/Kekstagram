@@ -50,7 +50,7 @@
 
     let hashTags = [];
 
-    const uploadPhotoButton = document.querySelector('.img-upload__label');
+    const uploadForm = document.querySelector('.img-upload__form');
     const uploadPhotoInput = document.querySelector('.img-upload__input');
     const uploadPhotoOverlay = document.querySelector('.img-upload__overlay');
     const uploadPhotoOverlayPostButton = document.querySelector('.img-upload__submit');
@@ -67,6 +67,10 @@
 
     const uploadPhotoComment = document.querySelector('.text__description');
     const uploadPhotoHashTags = document.querySelector('.text__hashtags');
+
+    const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+
+    const successTemplate = document.querySelector('#success').content.querySelector('.success');
 
     const onUploadPhotoOverlayCloseButtonClick = () => {
         closeUploadOverlay();
@@ -88,7 +92,9 @@
         uploadPhotoOverlay.classList.remove('hidden');
         effectLevelPanel.classList.add('visually-hidden');
         
-        uploadPhotoInput.blur();
+        if (document.activeElement === uploadPhotoInput) {
+            uploadPhotoInput.blur();
+        }
 
         pinOffset = effectPin.offsetLeft;
         depthWidth = effectDepth.clientWidth;
@@ -106,6 +112,11 @@
         uploadImage.style.filter = '';
         hashTags = [];
         uploadPhotoHashTags.value = '';
+        for (let i=0; i < effectsRadio.length; i++) {
+            if (effectsRadio[i].checked) {
+                effectsRadio[i].checked = false;
+            }
+        }
 
         document.removeEventListener('keydown', onUploadPhotoOverlayEscPress);
         document.removeEventListener('click', onUploadPhotoOverlayCloseButtonClick);
@@ -122,7 +133,6 @@
                 hashTags[i] = hashTags[i].toLowerCase();
             };
         };
-        console.log(hashTags); 
     };
 
     const countHashTags = (hashTag) => {
@@ -265,4 +275,62 @@
     };
 
     effectPin.addEventListener('mousedown', onMouseDown);
+
+    const onUploadSuccessEscPress = (evt) => {
+        if (window.utils.isEscKeycode(evt)) {
+            if (document.querySelector('.success')) {
+                document.querySelector('.success').remove();
+            }
+        }
+    }
+
+    const onUploadSuccessButtonClick = () => {
+        document.querySelector('.success').remove();
+    }
+
+    const onUploadErrorEscPress = (evt) => {
+        if (window.utils.isEscKeycode(evt)) {
+            if (document.querySelector('.error') !== null) {
+                document.querySelector('.error').remove();
+            }
+        }
+    }
+
+    const onUploadErrorTryAgainButtonClick = () => {
+        document.querySelector('.error').remove();
+        showUploadPhotoOverlay();
+    }
+
+    const onUploadErrorUploadNewFileButtonClick = () => {
+        document.querySelector('.error').remove();
+        uploadPhotoInput.value = '';
+        uploadPhotoInput.click();
+    }
+    
+    const successHandler = () => {
+        closeUploadOverlay();
+        uploadPhotoOverlay.classList.add('hidden');
+        let successMessage = successTemplate.cloneNode(true);
+        document.querySelector('main').insertAdjacentElement('afterbegin', successMessage);
+
+        document.addEventListener('keydown', onUploadSuccessEscPress);
+        document.querySelector('.success__button').addEventListener('click', onUploadSuccessButtonClick);
+    }
+
+    const errorHandler = (errorText) => {
+        uploadPhotoOverlay.classList.add('hidden');
+        errorTemplate.querySelector('.error__title').textContent = errorText;
+        let errorMessage = errorTemplate.cloneNode(true);
+        document.querySelector('main').insertAdjacentElement('afterbegin', errorMessage);
+
+        document.addEventListener('keydown', onUploadErrorEscPress);
+        document.querySelectorAll('.error__button')[0].addEventListener('click', onUploadErrorTryAgainButtonClick)
+        document.querySelectorAll('.error__button')[1].addEventListener('click', onUploadErrorUploadNewFileButtonClick)
+    }
+
+    uploadForm.addEventListener('submit', (evt) => {
+        window.serverRequests.uploadData(new FormData(uploadForm), successHandler, errorHandler);
+        evt.preventDefault();
+    })
+
 })();
