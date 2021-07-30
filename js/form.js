@@ -63,13 +63,13 @@
     const effectsRadio = document.getElementsByName('effect');
     const effectLevelPanel = document.querySelector('.img-upload__effect-level');
 
-    const uploadImage = document.querySelector('.img-upload__preview').querySelector('img');
+    const uploadImagePreview = document.querySelector('.img-upload__preview')
+    const uploadImage = uploadImagePreview.querySelector('img');
 
     const uploadPhotoComment = document.querySelector('.text__description');
     const uploadPhotoHashTags = document.querySelector('.text__hashtags');
 
     const errorTemplate = document.querySelector('#error').content.querySelector('.error');
-
     const successTemplate = document.querySelector('#success').content.querySelector('.success');
 
     const onUploadPhotoOverlayCloseButtonClick = () => {
@@ -96,6 +96,7 @@
             uploadPhotoInput.blur();
         }
 
+        uploadImagePreview.style.transform = `scale(1)`
         pinOffset = effectPin.offsetLeft;
         depthWidth = effectDepth.clientWidth;
     
@@ -332,5 +333,5 @@
         window.serverRequests.uploadData(new FormData(uploadForm), successHandler, errorHandler);
         evt.preventDefault();
     })
-
+    
 })();
