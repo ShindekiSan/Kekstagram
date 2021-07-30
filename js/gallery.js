@@ -203,16 +203,6 @@
         bigPictureCloseButton.addEventListener('click', onBigPictureCloseButtonClick);
     };
 
-    const debounce = (interval, action) => {
-        let lastTimeout = 0;
-        return () => {
-            if (lastTimeout) {
-                clearTimeout(lastTimeout);
-            }
-            lastTimeout = setTimeout(action, interval);
-        }
-    }
-
     const filterPhotos = (filteredPhotos) => {
         document.querySelectorAll('.picture').forEach((c) => {
             c.parentNode.removeChild(c);
@@ -266,7 +256,7 @@
         popularPhotosFiltering()
     }
 
-    popularPhotosFilter.addEventListener('click', debounce(DEBOUNCE_INTERVAL, onPopularPhotosButtonClick));
-    newPhotosFilter.addEventListener('click', debounce(DEBOUNCE_INTERVAL, onNewPhotosButtonClick));
-    discussedPhotosFilter.addEventListener('click', debounce(DEBOUNCE_INTERVAL, onDiscussedPhotosButtonClick));
+    popularPhotosFilter.addEventListener('click', window.utils.debounce(DEBOUNCE_INTERVAL, onPopularPhotosButtonClick));
+    newPhotosFilter.addEventListener('click', window.utils.debounce(DEBOUNCE_INTERVAL, onNewPhotosButtonClick));
+    discussedPhotosFilter.addEventListener('click', window.utils.debounce(DEBOUNCE_INTERVAL, onDiscussedPhotosButtonClick));
 })();

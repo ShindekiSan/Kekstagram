@@ -163,7 +163,7 @@
 
     imageScaleBiggerButton.addEventListener('click', onScaleBiggerButtonClick);
     imageScaleSmallerButton.addEventListener('click', onScaleSmallerButtonClick);
-    
+
     // Hash-tags validation
 
     const onHashTagsChange = () => {

@@ -22,5 +22,14 @@
         isEnterKeycode: function(evt) {
             return evt.keyCode === ENTER_KEYCODE;
         },
+        debounce: function(interval, action) {
+            let lastTimeout = 0;
+            return () => {
+                if (lastTimeout) {
+                    clearTimeout(lastTimeout);
+                }
+                lastTimeout = setTimeout(action, interval);
+            }
+        },
     }
 })();
