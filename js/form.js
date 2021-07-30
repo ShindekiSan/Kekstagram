@@ -47,6 +47,12 @@
     let currentEffectPinPosition = MAX_EFFECT_POSITION;
     let pinOffset = 0;
     let depthWidth = 0;
+    let scaleValue = 1;
+    let currentScalePercentage = 0;
+    let maxScalePercentage = 100;
+    let minScalePercentage = 25;
+    let scaleResizePercentage = 25;
+    let scaleCoefficient = 100;
 
     let hashTags = [];
 
@@ -65,6 +71,10 @@
 
     const uploadImagePreview = document.querySelector('.img-upload__preview')
     const uploadImage = uploadImagePreview.querySelector('img');
+
+    const imageScaleSmallerButton = document.querySelector('.scale__control--smaller');
+    const imageScaleBiggerButton = document.querySelector('.scale__control--bigger');
+    const imageScalePercentage = document.querySelector('.scale__control--value');
 
     const uploadPhotoComment = document.querySelector('.text__description');
     const uploadPhotoHashTags = document.querySelector('.text__hashtags');
@@ -96,7 +106,8 @@
             uploadPhotoInput.blur();
         }
 
-        uploadImagePreview.style.transform = `scale(1)`
+        currentScalePercentage = parseInt(imageScalePercentage.value);
+        uploadImagePreview.style.transform = `scale(${scaleValue})`;
         pinOffset = effectPin.offsetLeft;
         depthWidth = effectDepth.clientWidth;
     
@@ -113,16 +124,46 @@
         uploadImage.style.filter = '';
         hashTags = [];
         uploadPhotoHashTags.value = '';
+        resetScale();
         for (let i=0; i < effectsRadio.length; i++) {
             if (effectsRadio[i].checked) {
                 effectsRadio[i].checked = false;
-            }
-        }
+            };
+        };
 
         document.removeEventListener('keydown', onUploadPhotoOverlayEscPress);
         document.removeEventListener('click', onUploadPhotoOverlayCloseButtonClick);
     };
 
+    // Image scale change
+
+    const resetScale = () => {
+        imageScalePercentage.value = `${maxScalePercentage}%`;
+        scaleValue = maxScalePercentage / scaleCoefficient;
+        uploadImagePreview.style.transform = `scale(${scaleValue})` 
+    }
+
+    const onScaleBiggerButtonClick = () => {
+        if  (currentScalePercentage < maxScalePercentage) {
+            currentScalePercentage = currentScalePercentage + scaleResizePercentage;
+            scaleValue = currentScalePercentage / scaleCoefficient;
+            uploadImagePreview.style.transform = `scale(${scaleValue})`;
+            imageScalePercentage.value = `${currentScalePercentage}%`;
+        };
+    };
+
+    const onScaleSmallerButtonClick = () => {
+        if (currentScalePercentage > minScalePercentage) {
+            currentScalePercentage = currentScalePercentage - scaleResizePercentage;
+            scaleValue = currentScalePercentage / scaleCoefficient;
+            uploadImagePreview.style.transform = `scale(${scaleValue})`;
+            imageScalePercentage.value = `${currentScalePercentage}%`;
+        };
+    };
+
+    imageScaleBiggerButton.addEventListener('click', onScaleBiggerButtonClick);
+    imageScaleSmallerButton.addEventListener('click', onScaleSmallerButtonClick);
+    
     // Hash-tags validation
 
     const onHashTagsChange = () => {
@@ -299,12 +340,14 @@
 
     const onUploadErrorTryAgainButtonClick = () => {
         document.querySelector('.error').remove();
+        resetScale();
         showUploadPhotoOverlay();
     }
 
     const onUploadErrorUploadNewFileButtonClick = () => {
         document.querySelector('.error').remove();
         uploadPhotoInput.value = '';
+        resetScale();
         uploadPhotoInput.click();
     }
     
