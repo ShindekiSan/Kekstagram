@@ -373,7 +373,7 @@
     }
 
     uploadForm.addEventListener('submit', (evt) => {
-        window.serverRequests.uploadData(new FormData(uploadForm), successHandler, errorHandler);
+        window.backend.uploadData(new FormData(uploadForm), successHandler, errorHandler);
         evt.preventDefault();
     })
     

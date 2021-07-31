@@ -3,7 +3,7 @@
 (function() {
     const TIMEOUT_INTERVAL = 10000;
 
-    window.serverRequests = {
+    window.backend = {
         downloadData: async function(onLoad, onError) {
             let downloadURL = 'https://23.javascript.pages.academy/kekstagram/data';
 

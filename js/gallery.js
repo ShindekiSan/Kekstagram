@@ -92,7 +92,7 @@
         console.log(errorMessage);
     };
 
-    window.serverRequests.downloadData(successHandler, errorHandler);
+    window.backend.downloadData(successHandler, errorHandler);
 
     // Show big picture
 
