@@ -332,7 +332,7 @@
 
     const onUploadErrorEscPress = (evt) => {
         if (window.utils.isEscKeycode(evt)) {
-            if (document.querySelector('.error') !== null) {
+            if (document.querySelector('.error')) {
                 document.querySelector('.error').remove();
             }
         }
@@ -353,7 +353,6 @@
     
     const successHandler = () => {
         closeUploadOverlay();
-        uploadPhotoOverlay.classList.add('hidden');
         let successMessage = successTemplate.cloneNode(true);
         document.querySelector('main').insertAdjacentElement('afterbegin', successMessage);
 
