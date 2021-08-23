@@ -3,7 +3,7 @@
 (function () {
     const MAX_EFFECT_POSITION = 100;
 
-    const effects = {
+    const EFFECTS = {
         none: {
             filterName: 'none',
             minValue: 0,
@@ -31,7 +31,7 @@
         phobos: {
             filterName: 'blur',
             minValue: 0,
-            maxValue: 5,
+            maxValue: 3,
             format: 'px',
         },
         heat: {
@@ -49,35 +49,35 @@
     let depthWidth = 0;
     let scaleValue = 1;
     let currentScalePercentage = 0;
-    let maxScalePercentage = 100;
-    let minScalePercentage = 25;
-    let scaleResizePercentage = 25;
-    let scaleCoefficient = 100;
+    const MAX_SCALE_PERCENTAGE = 100;
+    const MIN_SCALE_PERCENTAGE = 25;
+    const SCALE_RESIZE_PERCENTAGE = 25;
+    const SCALE_COEFFICIENT = 100;
 
     let hashTags = [];
 
     const uploadForm = document.querySelector('.img-upload__form');
-    const uploadPhotoInput = document.querySelector('.img-upload__input');
-    const uploadPhotoOverlay = document.querySelector('.img-upload__overlay');
-    const uploadPhotoOverlayPostButton = document.querySelector('.img-upload__submit');
+    const uploadPhotoInput = uploadForm.querySelector('.img-upload__input');
+    const uploadPhotoOverlay = uploadForm.querySelector('.img-upload__overlay');
+    const uploadPhotoOverlayPostButton = uploadForm.querySelector('.img-upload__submit');
     const uploadPhotoOverlayCloseButton = uploadPhotoOverlay.querySelector('.img-upload__cancel');
 
-    const effectPin = document.querySelector('.effect-level__pin');
-    const effectDepth = document.querySelector('.effect-level__depth');
-    const effectValue = document.querySelector('.effect-level__value');
-    const effectsList = document.querySelector('.effects__list');
-    const effectsRadio = document.getElementsByName('effect');
     const effectLevelPanel = document.querySelector('.img-upload__effect-level');
+    const effectPin = effectLevelPanel.querySelector('.effect-level__pin');
+    const effectDepth = effectLevelPanel.querySelector('.effect-level__depth');
+    const effectValue = effectLevelPanel.querySelector('.effect-level__value');
+    const effectsList = uploadPhotoOverlay.querySelector('.effects__list');
+    const effectsRadio = document.getElementsByName('effect');
 
-    const uploadImagePreview = document.querySelector('.img-upload__preview')
+    const uploadImagePreview = uploadPhotoOverlay.querySelector('.img-upload__preview')
     const uploadImage = uploadImagePreview.querySelector('img');
 
-    const imageScaleSmallerButton = document.querySelector('.scale__control--smaller');
-    const imageScaleBiggerButton = document.querySelector('.scale__control--bigger');
-    const imageScalePercentage = document.querySelector('.scale__control--value');
+    const imageScaleSmallerButton = uploadPhotoOverlay.querySelector('.scale__control--smaller');
+    const imageScaleBiggerButton = uploadPhotoOverlay.querySelector('.scale__control--bigger');
+    const imageScalePercentage = uploadPhotoOverlay.querySelector('.scale__control--value');
 
-    const uploadPhotoComment = document.querySelector('.text__description');
-    const uploadPhotoHashTags = document.querySelector('.text__hashtags');
+    const uploadPhotoComment = uploadPhotoOverlay.querySelector('.text__description');
+    const uploadPhotoHashTags = uploadPhotoOverlay.querySelector('.text__hashtags');
 
     const errorTemplate = document.querySelector('#error').content.querySelector('.error');
     const successTemplate = document.querySelector('#success').content.querySelector('.success');
@@ -89,13 +89,13 @@
     // Show/Hide upload overlay
 
     const onUploadPhotoOverlayEscPress = (evt) => {
-        if (window.utils.isEscKeycode(evt)) {
+        window.utils.isEscKey(evt, () => {
             if (uploadPhotoHashTags === document.activeElement || uploadPhotoComment === document.activeElement) {
-                document.activeElement.blur();
+                return;
             } else {
                 closeUploadOverlay();
             };
-        };
+        });
     };
 
     const showUploadPhotoOverlay = () => {
@@ -116,7 +116,14 @@
         effectsList.addEventListener('click', getEffect);
     };
 
-    uploadPhotoInput.addEventListener('change', showUploadPhotoOverlay)
+    uploadPhotoInput.addEventListener('change', showUploadPhotoOverlay);
+
+    const resetScale = () => {
+        imageScalePercentage.value = `${MAX_SCALE_PERCENTAGE}%`;
+        scaleValue = MAX_SCALE_PERCENTAGE / SCALE_COEFFICIENT;
+        uploadImagePreview.style.transform = `scale(${scaleValue})` 
+    }
+
 
     const closeUploadOverlay = () => {
         uploadPhotoInput.value = '';
@@ -125,11 +132,11 @@
         hashTags = [];
         uploadPhotoHashTags.value = '';
         resetScale();
-        for (let i=0; i < effectsRadio.length; i++) {
-            if (effectsRadio[i].checked) {
-                effectsRadio[i].checked = false;
-            };
-        };
+        effectsRadio.forEach((elem) => {
+            if (elem.checked) {
+                elem.checked = false;
+            }
+        })
 
         document.removeEventListener('keydown', onUploadPhotoOverlayEscPress);
         document.removeEventListener('click', onUploadPhotoOverlayCloseButtonClick);
@@ -137,25 +144,19 @@
 
     // Image scale change
 
-    const resetScale = () => {
-        imageScalePercentage.value = `${maxScalePercentage}%`;
-        scaleValue = maxScalePercentage / scaleCoefficient;
-        uploadImagePreview.style.transform = `scale(${scaleValue})` 
-    }
-
     const onScaleBiggerButtonClick = () => {
-        if  (currentScalePercentage < maxScalePercentage) {
-            currentScalePercentage = currentScalePercentage + scaleResizePercentage;
-            scaleValue = currentScalePercentage / scaleCoefficient;
+        if  (currentScalePercentage < MAX_SCALE_PERCENTAGE) {
+            currentScalePercentage = currentScalePercentage + SCALE_RESIZE_PERCENTAGE;
+            scaleValue = currentScalePercentage / SCALE_COEFFICIENT;
             uploadImagePreview.style.transform = `scale(${scaleValue})`;
             imageScalePercentage.value = `${currentScalePercentage}%`;
         };
     };
 
     const onScaleSmallerButtonClick = () => {
-        if (currentScalePercentage > minScalePercentage) {
-            currentScalePercentage = currentScalePercentage - scaleResizePercentage;
-            scaleValue = currentScalePercentage / scaleCoefficient;
+        if (currentScalePercentage > MIN_SCALE_PERCENTAGE) {
+            currentScalePercentage = currentScalePercentage - SCALE_RESIZE_PERCENTAGE;
+            scaleValue = currentScalePercentage / SCALE_COEFFICIENT;
             uploadImagePreview.style.transform = `scale(${scaleValue})`;
             imageScalePercentage.value = `${currentScalePercentage}%`;
         };
@@ -168,22 +169,22 @@
 
     const onHashTagsChange = () => {
         hashTags = uploadPhotoHashTags.value.split(' '); 
-        for (let i=0; i < hashTags.length; i++) {
-            if (hashTags[i] === '') {
-                hashTags.splice(i,1);
+        hashTags.forEach((elem, index) => {
+            if (elem === '') {
+                hashTags.splice(index,1);
             } else {
-                hashTags[i] = hashTags[i].toLowerCase();
+                elem = elem.toLowerCase();
             };
-        };
+        });
     };
 
     const countHashTags = (hashTag) => {
         let count = 0;
-        for (let i=0; i < hashTags.length; i++) {
-            if (hashTags[i] === hashTag) {
+        hashTags.forEach((elem) => {
+            if (elem === hashTag) {
                 count = count + 1;
             };
-        };
+        })
         return count;
     };
 
@@ -193,21 +194,21 @@
         } else if (hashTags.length === 0) {
             uploadPhotoHashTags.setCustomValidity('');
         } else {
-            for (let i=0; i < hashTags.length; i++) {
-                if (hashTags[i][0] !== '#') {
+            hashTags.forEach((elem) => {
+                if (elem[0] !== '#') {
                     uploadPhotoHashTags.setCustomValidity('Хэш-теги должны начинаться с решётки');
-                } else if (hashTags[i] === '#') {
+                } else if (elem === '#') {
                     uploadPhotoHashTags.setCustomValidity('Хэш-теги не могут состоять только из решетки');
-                } else if ((hashTags[i].split('#').length - 1) > 1) {
+                } else if ((elem.split('#').length - 1) > 1) {
                     uploadPhotoHashTags.setCustomValidity('Хэш-теги должны разделяться пробелами');
-                } else if (hashTags[i].length > 20) {
+                } else if (elem.length > 20) {
                     uploadPhotoHashTags.setCustomValidity('Хэш-тег не должен быть длиннее 20 символов');
-                } else if (countHashTags(hashTags[i]) > 1 ) {
+                } else if (countHashTags(elem) > 1 ) {
                     uploadPhotoHashTags.setCustomValidity('Не должно быть повторяющихся хэш-тегов(#ХэшТег = #хэштег)');
                 } else {
                     uploadPhotoHashTags.setCustomValidity('');
                 };
-            };
+            });
         };
     };
 
@@ -217,34 +218,34 @@
     // Effect calculation
 
     const effectLevel = () => {
-        currentEffectLevel = ((effects[currentEffect].maxValue - effects[currentEffect].minValue)/MAX_EFFECT_POSITION) * currentEffectPinPosition + effects[currentEffect].minValue;
+        currentEffectLevel = ((EFFECTS[currentEffect].maxValue - EFFECTS[currentEffect].minValue)/MAX_EFFECT_POSITION) * currentEffectPinPosition + EFFECTS[currentEffect].minValue;
     };
 
     const getEffect = () => {
-        for (let i=0; i < effectsRadio.length; i++) {
-            if (effectsRadio[i].checked) {
-                if (effectsRadio[i].getAttribute('value') === 'none') {
+        effectsRadio.forEach((elem) => {
+            if (elem.checked) {
+                if (elem.getAttribute('value') === 'none') {
                     effectLevelPanel.classList.add('visually-hidden');
-                    currentEffect = effectsRadio[i].getAttribute('value');
-                    effectValue.setAttribute('value', `${effects[currentEffect].filterName}`);
+                    currentEffect = elem.getAttribute('value');
+                    effectValue.setAttribute('value', `${EFFECTS[currentEffect].filterName}`);
                 }
                 else {
-                    if (effectsRadio[i].getAttribute('value') !== currentEffect && effectsRadio[i].getAttribute('value') !== 'none') {
+                    if (elem.getAttribute('value') !== currentEffect && elem.getAttribute('value') !== 'none') {
                         if (effectLevelPanel.classList.contains('visually-hidden')) {
                             effectLevelPanel.classList.remove('visually-hidden');
                         }
-                        currentEffect = effectsRadio[i].getAttribute('value');
+                        currentEffect = elem.getAttribute('value');
                         if (currentEffectPinPosition !== MAX_EFFECT_POSITION) {
                             currentEffectPinPosition  = MAX_EFFECT_POSITION;
                         };
                         effectPin.style.left = pinOffset + 'px';
                         effectDepth.style.width = depthWidth + 'px';
                         effectLevel();
-                        effectValue.setAttribute('value', `${effects[currentEffect].filterName}(${effects[currentEffect].maxValue})`);
+                        effectValue.setAttribute('value', `${EFFECTS[currentEffect].filterName}(${EFFECTS[currentEffect].maxValue})`);
                     };
                 };
             };
-        };
+        });
         setEffect();
     };
 
@@ -253,7 +254,7 @@
             uploadImage.style.filter = currentEffect;
         }
         else {
-            uploadImage.style.filter = `${effects[currentEffect].filterName}(${currentEffectLevel}${effects[currentEffect].format})`;
+            uploadImage.style.filter = `${EFFECTS[currentEffect].filterName}(${currentEffectLevel}${EFFECTS[currentEffect].format})`;
         };
     };
 
@@ -319,23 +320,23 @@
     effectPin.addEventListener('mousedown', onMouseDown);
 
     const onUploadSuccessEscPress = (evt) => {
-        if (window.utils.isEscKeycode(evt)) {
+        window.utils.isEscKey(evt, () => {
             if (document.querySelector('.success')) {
                 document.querySelector('.success').remove();
             }
-        }
-    }
+        });
+    };
 
     const onUploadSuccessButtonClick = () => {
         document.querySelector('.success').remove();
     }
 
     const onUploadErrorEscPress = (evt) => {
-        if (window.utils.isEscKeycode(evt)) {
+        window.utils.isEscKey(evt, () => {
             if (document.querySelector('.error')) {
                 document.querySelector('.error').remove();
             }
-        }
+        });
     }
 
     const onUploadErrorTryAgainButtonClick = () => {
@@ -353,7 +354,7 @@
     
     const successHandler = () => {
         closeUploadOverlay();
-        let successMessage = successTemplate.cloneNode(true);
+        const successMessage = successTemplate.cloneNode(true);
         document.querySelector('main').insertAdjacentElement('afterbegin', successMessage);
 
         document.addEventListener('keydown', onUploadSuccessEscPress);
@@ -362,8 +363,8 @@
 
     const errorHandler = (errorText) => {
         uploadPhotoOverlay.classList.add('hidden');
-        errorTemplate.querySelector('.error__title').textContent = errorText;
-        let errorMessage = errorTemplate.cloneNode(true);
+        const errorMessage = errorTemplate.cloneNode(true);
+        errorMessage.querySelector('.error__title').textContent = errorText;
         document.querySelector('main').insertAdjacentElement('afterbegin', errorMessage);
 
         document.addEventListener('keydown', onUploadErrorEscPress);
