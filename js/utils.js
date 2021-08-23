@@ -31,8 +31,9 @@
         debounce: function(action) {
             if (lastTimeout) {
                 clearTimeout(lastTimeout);
-            }
-            lastTimeout = setTimeout(action, DEBOUNCE_INTERVAL);
+            };
+
+            lastTimeout = setTimeout(action, DEBOUNCE_INTERVAL)
         },
         renderPhoto: (template, photoInfo) => {
             const photosElement = template.cloneNode(true);

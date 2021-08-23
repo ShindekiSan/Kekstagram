@@ -18,6 +18,7 @@
     const socialComment = socialCommentsSection.querySelector('.social__comment');
     const bigPictureCloseButton = photoBigPicture.querySelector('.big-picture__cancel');
     const socialCommentsAmount = photoBigPicture.querySelector('.social__comment-count');
+    const socialCommentsAmountNumber = socialCommentsAmount.querySelector('.comments-count');
     const socialCommentsLoader = photoBigPicture.querySelector('.social__comments-loader');
     
     const photosFilters = document.querySelector('.img-filters');
@@ -85,11 +86,13 @@
         photoBigPicture.querySelector('.likes-count').textContent = photos[bigPicturePhotoIndex].likes;
 
         let commentsAmount = photos[bigPicturePhotoIndex].comments.length;
-        if (photos[bigPicturePhotoIndex].comments.length <= BIG_PICTURE_COMMENTS_COUNT) {
-            socialCommentsAmount.textContent = `${commentsAmount} из ${commentsAmount} комментариев`;
+
+        socialCommentsAmountNumber.textContent = commentsAmount;
+        if (commentsAmount <= BIG_PICTURE_COMMENTS_COUNT) {
+            socialCommentsAmount.textContent = `${commentsAmount} из ${socialCommentsAmountNumber.textContent} комментариев`;
             socialCommentsLoader.classList.add('hidden');
         } else {
-            socialCommentsAmount.textContent = `${BIG_PICTURE_COMMENTS_COUNT} из ${commentsAmount} комментариев`;
+            socialCommentsAmount.textContent = `${BIG_PICTURE_COMMENTS_COUNT} ${socialCommentsAmountNumber.textContent} из комментариев`;
             socialCommentsLoader.classList.remove('hidden');
         }
 

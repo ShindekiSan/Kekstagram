@@ -10,6 +10,8 @@
 
     const photosListElementTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
+    let clickedButtonId = '';
+
     const filtering = {
         popularPhotos: function(photos) {
             window.utils.appendPhotos(photosListElementTemplate, photosList, photos)
@@ -44,32 +46,29 @@
         });
     }
 
-    const filterPhotos = (clickedButtonId) => {
+    const filterPhotos = () => {
         let filteredPhotos = [];
 
-        clearActiveButton();
         removePhotosFromPage();
 
         switch (clickedButtonId) {
             case popularPhotosFilter.id:
-                filtering.popularPhotos(window.downloadedPhotosCopy);
-                popularPhotosFilter.classList.add('img-filters__button--active'); 
+                filtering.popularPhotos(window.downloadedPhotosCopy); 
                 break;
             case discussedPhotosFilter.id:
-                filteredPhotos = filteredPhotos.concat(filtering.discussedPhotos(window.downloadedPhotosCopy));
-                window.utils.appendPhotos(photosListElementTemplate, photosList, filteredPhotos);
-                discussedPhotosFilter.classList.add('img-filters__button--active');
+                window.utils.appendPhotos(photosListElementTemplate, photosList, filtering.discussedPhotos(window.downloadedPhotosCopy));
                 break;
             case newPhotosFilter.id:
-                filteredPhotos = filteredPhotos.concat(filtering.newPhotos(window.downloadedPhotosCopy));
-                window.utils.appendPhotos(photosListElementTemplate, photosList, filteredPhotos);
-                newPhotosFilter.classList.add('img-filters__button--active');
+                window.utils.appendPhotos(photosListElementTemplate, photosList, filtering.newPhotos(window.downloadedPhotosCopy));
                 break;
         };
     };
 
     const onFilterButtonClick = (evt) => {
-        window.utils.debounce(filterPhotos(evt.target.id));
+        clickedButtonId = evt.target.id;
+        window.utils.debounce(filterPhotos);
+        clearActiveButton();
+        evt.target.classList.add('img-filters__button--active');
     };
 
     for (let i=0; i < filterButtons.length; i++) {
