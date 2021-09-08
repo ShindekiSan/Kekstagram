@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-    let bigPicturePhotoIndex = 0;
     
     let photos = [];
 
