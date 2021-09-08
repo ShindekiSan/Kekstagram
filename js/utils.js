@@ -20,6 +20,7 @@
         },
         isEscKey: function(evt, callback) {
             if (evt.key === ESC_KEY) {
+                evt.preventDefault();
                 callback();
             }
         },
@@ -32,27 +33,8 @@
             if (lastTimeout) {
                 clearTimeout(lastTimeout);
             };
-
-            lastTimeout = setTimeout(action, DEBOUNCE_INTERVAL)
-        },
-        renderPhoto: (template, photoInfo) => {
-            const photosElement = template.cloneNode(true);
-            photosElement.querySelector('.picture__img').setAttribute('src', photoInfo.url);
-            photosElement.querySelector('.picture__likes').textContent = photoInfo.likes;
-            photosElement.querySelector('.picture__comments').textContent = photoInfo.comments.length;
-            return photosElement;
-        },
-        appendPhotos: (template, photosList, photosInfo) => {
-            const photosFragment = document.createDocumentFragment();
-
-            photosInfo.forEach((elem, index) => {
-                const renderedPicture = window.utils.renderPhoto(template, elem);
-                renderedPicture.dataset.number = index;
-
-            photosFragment.appendChild(renderedPicture);
-            });
-
-            photosList.appendChild(photosFragment);
+            
+            lastTimeout = setTimeout(action, DEBOUNCE_INTERVAL);
         },
     }
 })();

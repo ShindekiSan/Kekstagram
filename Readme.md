@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
-* Студент: [Абельчук Максим](https://up.htmlacademy.ru/javascript/16/user/845289)
-* Наставник: [Сергей Стреха](https://htmlacademy.ru/profile/id70583).
+* Студент: [Абельчук Максим](https://github.com/ShindekiSan)
+* Наставник: [Сергей Стреха](https://github.com/Morfey216).
 
 ---
 

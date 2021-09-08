@@ -2,6 +2,10 @@
 
 (function () {
     const MAX_EFFECT_POSITION = 100;
+    const MAX_SCALE_PERCENTAGE = 100;
+    const MIN_SCALE_PERCENTAGE = 25;
+    const SCALE_RESIZE_PERCENTAGE = 25;
+    const SCALE_COEFFICIENT = 100;
 
     const EFFECTS = {
         none: {
@@ -49,10 +53,6 @@
     let depthWidth = 0;
     let scaleValue = 1;
     let currentScalePercentage = 0;
-    const MAX_SCALE_PERCENTAGE = 100;
-    const MIN_SCALE_PERCENTAGE = 25;
-    const SCALE_RESIZE_PERCENTAGE = 25;
-    const SCALE_COEFFICIENT = 100;
 
     let hashTags = [];
 
@@ -67,7 +67,7 @@
     const effectDepth = effectLevelPanel.querySelector('.effect-level__depth');
     const effectValue = effectLevelPanel.querySelector('.effect-level__value');
     const effectsList = uploadPhotoOverlay.querySelector('.effects__list');
-    const effectsRadio = document.getElementsByName('effect');
+    const effectsRadio = document.querySelectorAll('.effects__item');
 
     const uploadImagePreview = uploadPhotoOverlay.querySelector('.img-upload__preview')
     const uploadImage = uploadImagePreview.querySelector('img');
@@ -133,8 +133,8 @@
         uploadPhotoHashTags.value = '';
         resetScale();
         effectsRadio.forEach((elem) => {
-            if (elem.checked) {
-                elem.checked = false;
+            if (elem.querySelector('input').checked) {
+                elem.querySelector('input').checked = false;
             }
         })
 
@@ -223,18 +223,18 @@
 
     const getEffect = () => {
         effectsRadio.forEach((elem) => {
-            if (elem.checked) {
-                if (elem.getAttribute('value') === 'none') {
+            if (elem.querySelector('input').checked) {
+                if (elem.querySelector('input').getAttribute('value') === 'none') {
                     effectLevelPanel.classList.add('visually-hidden');
-                    currentEffect = elem.getAttribute('value');
+                    currentEffect = elem.querySelector('input').getAttribute('value');
                     effectValue.setAttribute('value', `${EFFECTS[currentEffect].filterName}`);
                 }
                 else {
-                    if (elem.getAttribute('value') !== currentEffect && elem.getAttribute('value') !== 'none') {
+                    if (elem.querySelector('input').getAttribute('value') !== currentEffect && elem.querySelector('input').getAttribute('value') !== 'none') {
                         if (effectLevelPanel.classList.contains('visually-hidden')) {
                             effectLevelPanel.classList.remove('visually-hidden');
                         }
-                        currentEffect = elem.getAttribute('value');
+                        currentEffect = elem.querySelector('input').getAttribute('value');
                         if (currentEffectPinPosition !== MAX_EFFECT_POSITION) {
                             currentEffectPinPosition  = MAX_EFFECT_POSITION;
                         };
@@ -261,9 +261,11 @@
     // Drag-n-drop for effect pin
 
     const onMouseDown = (evt) => {
+        evt.preventDefault();
         let pinCoords = evt.clientX;
 
         const onPinMouseMove = (moveEvt) => {
+            moveEvt.preventDefault();
             let pinShift = pinCoords - moveEvt.clientX;
 
             pinCoords = moveEvt.clientX;
@@ -291,6 +293,7 @@
         };
 
         const onPinMouseUp = (moveEvt) => {
+            moveEvt.preventDefault();
             let pinShift = pinCoords - moveEvt.clientX;
 
             pinCoords = moveEvt.clientX;
@@ -329,7 +332,7 @@
 
     const onUploadSuccessButtonClick = () => {
         document.querySelector('.success').remove();
-    }
+    };
 
     const onUploadErrorEscPress = (evt) => {
         window.utils.isEscKey(evt, () => {
@@ -337,20 +340,20 @@
                 document.querySelector('.error').remove();
             }
         });
-    }
+    };
 
     const onUploadErrorTryAgainButtonClick = () => {
         document.querySelector('.error').remove();
         resetScale();
         showUploadPhotoOverlay();
-    }
+    };
 
     const onUploadErrorUploadNewFileButtonClick = () => {
         document.querySelector('.error').remove();
         uploadPhotoInput.value = '';
         resetScale();
         uploadPhotoInput.click();
-    }
+    };
     
     const successHandler = () => {
         closeUploadOverlay();
@@ -359,22 +362,23 @@
 
         document.addEventListener('keydown', onUploadSuccessEscPress);
         document.querySelector('.success__button').addEventListener('click', onUploadSuccessButtonClick);
-    }
+    };
 
     const errorHandler = (errorText) => {
         uploadPhotoOverlay.classList.add('hidden');
         const errorMessage = errorTemplate.cloneNode(true);
+        const errorButtons = document.querySelectorAll('.error__button');
         errorMessage.querySelector('.error__title').textContent = errorText;
         document.querySelector('main').insertAdjacentElement('afterbegin', errorMessage);
 
         document.addEventListener('keydown', onUploadErrorEscPress);
-        document.querySelectorAll('.error__button')[0].addEventListener('click', onUploadErrorTryAgainButtonClick)
-        document.querySelectorAll('.error__button')[1].addEventListener('click', onUploadErrorUploadNewFileButtonClick)
-    }
+        errorButtons[0].addEventListener('click', onUploadErrorTryAgainButtonClick)
+        errorButtons[1].querySelectorAll('.error__button')[1].addEventListener('click', onUploadErrorUploadNewFileButtonClick)
+    };
 
     uploadForm.addEventListener('submit', (evt) => {
         window.backend.uploadData(new FormData(uploadForm), successHandler, errorHandler);
         evt.preventDefault();
-    })
+    });
     
 })();

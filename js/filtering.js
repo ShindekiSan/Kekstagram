@@ -2,35 +2,39 @@
 
 (function () {
     const NEW_PHOTOS_COUNT = 10;
-    const filterButtons = document.querySelectorAll('.img-filters__button');
+    const SPLICE_LENGTH = 1;
+    const filters = document.querySelector('.img-filters')
+    const filterButtons = filters.querySelectorAll('.img-filters__button');
     const popularPhotosFilter = document.querySelector('#filter-popular');
     const newPhotosFilter = document.querySelector('#filter-new');
     const discussedPhotosFilter = document.querySelector('#filter-discussed');
-    const photosList = document.querySelector('.pictures');
+    
+    filters.classList.remove('img-filters--inactive');
 
-    const photosListElementTemplate = document.querySelector('#picture').content.querySelector('.picture');
+    const buttonId = {
+        POPULAR: popularPhotosFilter.id,
+        DISCUSSED: discussedPhotosFilter.id,
+        NEW: newPhotosFilter.id,
+    }
 
-    let clickedButtonId = '';
-
-    const filtering = {
-        popularPhotos: function(photos) {
-            window.utils.appendPhotos(photosListElementTemplate, photosList, photos)
+    const Filter = {
+        POPULAR: function(photos) {
+            return photos;
         },
-        discussedPhotos: function (photos) {
-            let localPhotosCopy = [];
-            localPhotosCopy = localPhotosCopy.concat(photos);
-            localPhotosCopy.sort((a,b) => b.comments.length > a.comments.length ? 1 : -1)
-            return localPhotosCopy
+        DISCUSSED: function () {
+            const localPhotosCopy = [...window.photos];
+            localPhotosCopy.sort((a,b) => b.comments.length > a.comments.length ? 1 : -1);
+            return localPhotosCopy;
         },
-        newPhotos: function (photos) {
-            const newPhotosList = [];
+        NEW: function () {
+            const localPhotosCopy = [...window.photos];
+            let newPhotosList = [];
             while (newPhotosList.length < NEW_PHOTOS_COUNT) {
-                let photo = window.utils.getRandomElementFromList(photos);
-                if (newPhotosList.indexOf(photo) === -1) {
-                    newPhotosList.push(photo);
-                };
-            };
-            return newPhotosList
+                let randomElement = window.utils.getRandomElementFromList(localPhotosCopy);
+                let photo = localPhotosCopy.splice(randomElement.id, SPLICE_LENGTH);
+                newPhotosList = newPhotosList.concat(photo);
+            }
+            return newPhotosList;
         },
     };
 
@@ -40,38 +44,22 @@
         });
     };
 
-    const removePhotosFromPage = () => {
-        document.querySelectorAll('.picture').forEach((miniature) => {
-            miniature.parentNode.removeChild(miniature);
-        });
-    }
-
-    const filterPhotos = () => {
+    window.filterPhotos = (clickedButtonId) => {
         let filteredPhotos = [];
 
-        removePhotosFromPage();
+        clearActiveButton();
 
         switch (clickedButtonId) {
-            case popularPhotosFilter.id:
-                filtering.popularPhotos(window.downloadedPhotosCopy); 
+            case buttonId.POPULAR:
+                filteredPhotos = [...Filter.POPULAR(window.photos)]; 
                 break;
-            case discussedPhotosFilter.id:
-                window.utils.appendPhotos(photosListElementTemplate, photosList, filtering.discussedPhotos(window.downloadedPhotosCopy));
+            case buttonId.DISCUSSED:
+                filteredPhotos = [...Filter.DISCUSSED(window.photos)];
                 break;
-            case newPhotosFilter.id:
-                window.utils.appendPhotos(photosListElementTemplate, photosList, filtering.newPhotos(window.downloadedPhotosCopy));
+            case buttonId.NEW:
+                filteredPhotos = [...Filter.NEW(window.photos)];
                 break;
         };
-    };
-
-    const onFilterButtonClick = (evt) => {
-        clickedButtonId = evt.target.id;
-        window.utils.debounce(filterPhotos);
-        clearActiveButton();
-        evt.target.classList.add('img-filters__button--active');
-    };
-
-    for (let i=0; i < filterButtons.length; i++) {
-        filterButtons[i].addEventListener('click', onFilterButtonClick);
+        return filteredPhotos;
     };
 })();

@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(function () {
     const TIMEOUT_INTERVAL = 10000;
 
     window.backend = {
