@@ -6,6 +6,8 @@
     const MIN_SCALE_PERCENTAGE = 25;
     const SCALE_RESIZE_PERCENTAGE = 25;
     const SCALE_COEFFICIENT = 100;
+    const MAX_HASH_TAGS_NUMBER = 5;
+    const MAX_HASH_TAG_LENGTH = 20;
 
     const EFFECTS = {
         none: {
@@ -44,6 +46,15 @@
             maxValue: 3,
             format: '',
         },
+    };
+
+    const hashTagsValidity = {
+        moreThanMaxTagsNumber: `Не может быть больше ${MAX_HASH_TAGS_NUMBER} хэш-тегов`,
+        biggerThanMaxLength: `Хэш-тег не должен быть длиннее ${MAX_HASH_TAG_LENGTH} символов`,
+        containsOnlyTag: `Хэш-теги не могут состоять только из решетки`,
+        containsNoTag: `Хэш-теги должны начинаться с решётки`,
+        noSpacesBetweenHashTags: `Хэш-теги должны разделяться пробелами`,
+        sameHashTags: `Не должно быть повторяющихся хэш-тегов(#ХэшТег = #хэштег)`,
     };
 
     let currentEffectLevel = 0;
@@ -167,12 +178,14 @@
     const onHashTagsChange = () => {
         hashTags = uploadPhotoHashTags.value.split(' '); 
         hashTags.forEach((elem, index) => {
+            console.log(elem,index);
             if (elem === '') {
-                hashTags.splice(index,1);
+                hashTags.splice(index, 1);
             } else {
-                elem = elem.toLowerCase();
+                hashTags[index] = elem.toLowerCase();
             };
         });
+        console.log(hashTags);
     };
 
     const countHashTags = (hashTag) => {
@@ -181,27 +194,27 @@
             if (elem === hashTag) {
                 count = count + 1;
             };
-        })
+        });
         return count;
     };
 
     const hashTagsValidityChecking = () => {
-        if (hashTags.length > 5) {
-            uploadPhotoHashTags.setCustomValidity('Не может быть больше 5 хэш-тегов');
+        if (hashTags.length > MAX_HASH_TAGS_NUMBER) {
+            uploadPhotoHashTags.setCustomValidity(hashTagsValidity.moreThanMaxTagsNumber);
         } else if (hashTags.length === 0) {
             uploadPhotoHashTags.setCustomValidity('');
         } else {
             hashTags.forEach((elem) => {
                 if (elem[0] !== '#') {
-                    uploadPhotoHashTags.setCustomValidity('Хэш-теги должны начинаться с решётки');
+                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.containsNoTag);
                 } else if (elem === '#') {
-                    uploadPhotoHashTags.setCustomValidity('Хэш-теги не могут состоять только из решетки');
+                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.containsOnlyTag);
                 } else if ((elem.split('#').length - 1) > 1) {
-                    uploadPhotoHashTags.setCustomValidity('Хэш-теги должны разделяться пробелами');
-                } else if (elem.length > 20) {
-                    uploadPhotoHashTags.setCustomValidity('Хэш-тег не должен быть длиннее 20 символов');
+                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.noSpacesBetweenHashTags);
+                } else if (elem.length > MAX_HASH_TAG_LENGTH) {
+                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.biggerThanMaxLength);
                 } else if (countHashTags(elem) > 1 ) {
-                    uploadPhotoHashTags.setCustomValidity('Не должно быть повторяющихся хэш-тегов(#ХэшТег = #хэштег)');
+                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.sameHashTags);
                 } else {
                     uploadPhotoHashTags.setCustomValidity('');
                 };
@@ -366,13 +379,13 @@
     const errorHandler = (errorText) => {
         uploadPhotoOverlay.classList.add('hidden');
         const errorMessage = errorTemplate.cloneNode(true);
-        const errorButtons = document.querySelectorAll('.error__button');
         errorMessage.querySelector('.error__title').textContent = errorText;
         document.querySelector('main').insertAdjacentElement('afterbegin', errorMessage);
+        const errorButtons = document.querySelectorAll('.error__button');
 
         document.addEventListener('keydown', onUploadErrorEscPress);
         errorButtons[0].addEventListener('click', onUploadErrorTryAgainButtonClick)
-        errorButtons[1].querySelectorAll('.error__button')[1].addEventListener('click', onUploadErrorUploadNewFileButtonClick)
+        errorButtons[1].addEventListener('click', onUploadErrorUploadNewFileButtonClick)
     };
 
     uploadForm.addEventListener('submit', (evt) => {
