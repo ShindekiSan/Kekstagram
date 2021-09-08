@@ -40,7 +40,8 @@
 
             if (response.ok) {
                 let json = await response.json();
-                onLoad(json)
+                onLoad(json);
+                return json;
             } else {
                 onError(`Статус ответа: ${response.status} ${response.statusText}`)
             };
