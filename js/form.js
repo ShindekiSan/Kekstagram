@@ -119,8 +119,8 @@
     uploadPhotoInput.addEventListener('change', showUploadPhotoOverlay);
 
     const resetScale = () => {
-        imageScalePercentage.value = `${MAX_SCALE_PERCENTAGE}%`;
-        scaleValue = MAX_SCALE_PERCENTAGE / SCALE_COEFFICIENT;
+        imageScalePercentage.value = `${currentScalePercentage}%`;
+        scaleValue = currentScalePercentage / SCALE_COEFFICIENT;
         uploadImagePreview.style.transform = `scale(${scaleValue})` 
     }
 
@@ -131,6 +131,7 @@
         uploadImage.style.filter = '';
         hashTags = [];
         uploadPhotoHashTags.value = '';
+        currentScalePercentage = MAX_SCALE_PERCENTAGE;
         resetScale();
         effectsRadio.forEach((elem) => {
             if (elem.querySelector('input').checked) {
@@ -147,18 +148,14 @@
     const onScaleBiggerButtonClick = () => {
         if  (currentScalePercentage < MAX_SCALE_PERCENTAGE) {
             currentScalePercentage = currentScalePercentage + SCALE_RESIZE_PERCENTAGE;
-            scaleValue = currentScalePercentage / SCALE_COEFFICIENT;
-            uploadImagePreview.style.transform = `scale(${scaleValue})`;
-            imageScalePercentage.value = `${currentScalePercentage}%`;
+            resetScale();
         };
     };
 
     const onScaleSmallerButtonClick = () => {
         if (currentScalePercentage > MIN_SCALE_PERCENTAGE) {
             currentScalePercentage = currentScalePercentage - SCALE_RESIZE_PERCENTAGE;
-            scaleValue = currentScalePercentage / SCALE_COEFFICIENT;
-            uploadImagePreview.style.transform = `scale(${scaleValue})`;
-            imageScalePercentage.value = `${currentScalePercentage}%`;
+            resetScale();
         };
     };
 
@@ -344,6 +341,7 @@
 
     const onUploadErrorTryAgainButtonClick = () => {
         document.querySelector('.error').remove();
+        currentScalePercentage = MAX_SCALE_PERCENTAGE;
         resetScale();
         showUploadPhotoOverlay();
     };
@@ -351,6 +349,7 @@
     const onUploadErrorUploadNewFileButtonClick = () => {
         document.querySelector('.error').remove();
         uploadPhotoInput.value = '';
+        currentScalePercentage = MAX_SCALE_PERCENTAGE;
         resetScale();
         uploadPhotoInput.click();
     };
