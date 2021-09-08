@@ -3,7 +3,7 @@
 (function () {
     const NEW_PHOTOS_COUNT = 10;
     const SPLICE_LENGTH = 1;
-    const filters = document.querySelector('.img-filters')
+    const filters = document.querySelector('.img-filters');
     const filterButtons = filters.querySelectorAll('.img-filters__button');
     const popularPhotosFilter = document.querySelector('#filter-popular');
     const newPhotosFilter = document.querySelector('#filter-new');
@@ -15,7 +15,7 @@
         POPULAR: popularPhotosFilter.id,
         DISCUSSED: discussedPhotosFilter.id,
         NEW: newPhotosFilter.id,
-    }
+    };
 
     const Filter = {
         POPULAR: function(photos) {

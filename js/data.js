@@ -5,14 +5,14 @@
 
     const onErrorHandlerTryAgainButtonClick = () => {
         document.location.reload();
-    }
+    };
     
     const setErrorButtonEventListener = () => {
         const errorButtons = document.querySelectorAll('.error__button');
     
         errorButtons[0].addEventListener('click', onErrorHandlerTryAgainButtonClick);
         errorButtons[1].classList.add('hidden');
-    }
+    };
     
     window.downloadHandlers = {
         SUCCESS: function(photosData) {

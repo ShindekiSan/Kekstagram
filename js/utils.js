@@ -36,5 +36,5 @@
             
             lastTimeout = setTimeout(action, DEBOUNCE_INTERVAL);
         },
-    }
+    };
 })();

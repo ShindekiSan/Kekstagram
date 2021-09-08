@@ -36,14 +36,14 @@
 
             // --------------
 
-            let response = await fetch(downloadURL)
+            let response = await fetch(downloadURL);
 
             if (response.ok) {
                 let json = await response.json();
                 onLoad(json);
                 return json;
             } else {
-                onError(`Статус ответа: ${response.status} ${response.statusText}`)
+                onError(`Статус ответа: ${response.status} ${response.statusText}`);
             };
         },
         uploadData: async function(data, onLoad, onError) {
@@ -79,15 +79,15 @@
 
             let response = await fetch(uploadURL, {
                 method: 'POST',
-                body: data
+                body: data,
             });
 
             if (response.ok) {
                 let json = await response.json();
                 onLoad(json);
             } else {
-                onError(`Статус ответа: ${response.status} ${response.statusText}`)
-            }
+                onError(`Статус ответа: ${response.status} ${response.statusText}`);
+            };
         },
-    }
+    };
 })();

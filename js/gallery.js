@@ -43,7 +43,7 @@
     };
 
     const onPhotosListElementClick = (evt) => {
-        window.showBigPicture(photos[evt.target.parentNode.dataset.number])
+        window.showBigPicture(photos[evt.target.parentNode.dataset.number]);
         evt.target.parentNode.blur();
     };
 

@@ -22,6 +22,6 @@
             });
 
             reader.readAsDataURL(file);
-        }
-    })
+        };
+    });
 })();

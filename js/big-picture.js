@@ -24,7 +24,7 @@
 
     const onBigPictureCloseButtonClick = () => {
         closeBigPicture();
-    }
+    };
 
     const onBigPictureEscPress = (evt) => {
         window.utils.isEscKey(evt, closeBigPicture);
@@ -46,7 +46,9 @@
 
         // Photo Description
 
-        socialPhotoDescription.querySelector('.social__picture').src = `img/avatar-${window.utils.getRandomInteger(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER)}.svg`;
+        socialPhotoDescription.querySelector('.social__picture')
+        .src = `img/avatar-${window.utils.getRandomInteger(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER)}.svg`;
+        
         socialPhotoDescription.querySelector('.social__caption').textContent = picture.description;
 
         const showComments = () => {
