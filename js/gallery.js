@@ -4,8 +4,6 @@
     
     let photos = [];
 
-    const filterButtons = document.querySelectorAll('.img-filters__button');
-
     // User photos miniatures
 
     const photosList = document.querySelector('.pictures');
