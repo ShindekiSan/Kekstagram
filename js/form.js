@@ -48,15 +48,6 @@
         },
     };
 
-    const hashTagsValidity = {
-        moreThanMaxTagsNumber: `Не может быть больше ${MAX_HASH_TAGS_NUMBER} хэш-тегов`,
-        biggerThanMaxLength: `Хэш-тег не должен быть длиннее ${MAX_HASH_TAG_LENGTH} символов`,
-        containsOnlyTag: `Хэш-теги не могут состоять только из решетки`,
-        containsNoTag: `Хэш-теги должны начинаться с решётки`,
-        noSpacesBetweenHashTags: `Хэш-теги должны разделяться пробелами`,
-        sameHashTags: `Не должно быть повторяющихся хэш-тегов(#ХэшТег = #хэштег)`,
-    };
-
     let currentEffectLevel = 0;
     let currentEffect = 'none';
     let currentEffectPinPosition = MAX_EFFECT_POSITION;
@@ -174,6 +165,15 @@
     imageScaleSmallerButton.addEventListener('click', onScaleSmallerButtonClick);
 
     // Hash-tags validation
+    
+    const HashTagsErrorName = {
+        moreThanMaxTagsNumber: `Не может быть больше ${MAX_HASH_TAGS_NUMBER} хэш-тегов`,
+        biggerThanMaxLength: `Хэш-тег не должен быть длиннее ${MAX_HASH_TAG_LENGTH} символов`,
+        onlyWithSharp: `Хэш-теги не могут состоять только из решетки`,
+        withNoSharp: `Хэш-теги должны начинаться с решётки`,
+        noSpacesBetweenHashTags: `Хэш-теги должны разделяться пробелами`,
+        sameHashTags: `Не должно быть повторяющихся хэш-тегов(#ХэшТег = #хэштег)`,
+    };
 
     const onHashTagsChange = () => {
         hashTags = uploadPhotoHashTags.value.split(' '); 
@@ -185,7 +185,6 @@
                 hashTags[index] = elem.toLowerCase();
             };
         });
-        console.log(hashTags);
     };
 
     const countHashTags = (hashTag) => {
@@ -198,32 +197,71 @@
         return count;
     };
 
-    const hashTagsValidityChecking = () => {
-        if (hashTags.length > MAX_HASH_TAGS_NUMBER) {
-            uploadPhotoHashTags.setCustomValidity(hashTagsValidity.moreThanMaxTagsNumber);
-        } else if (hashTags.length === 0) {
-            uploadPhotoHashTags.setCustomValidity('');
-        } else {
-            hashTags.forEach((elem) => {
-                if (elem[0] !== '#') {
-                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.containsNoTag);
-                } else if (elem === '#') {
-                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.containsOnlyTag);
-                } else if ((elem.split('#').length - 1) > 1) {
-                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.noSpacesBetweenHashTags);
-                } else if (elem.length > MAX_HASH_TAG_LENGTH) {
-                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.biggerThanMaxLength);
-                } else if (countHashTags(elem) > 1 ) {
-                    uploadPhotoHashTags.setCustomValidity(hashTagsValidity.sameHashTags);
-                } else {
-                    uploadPhotoHashTags.setCustomValidity('');
-                };
-            });
+    const errorState = Object.assign({}, HashTagsErrorName);
+
+    for (let key in errorState) {
+        errorState[key] = false;
+    };
+
+    const isMoreThanMaxTagsMunber = () => {
+        return hashTags.length > MAX_HASH_TAGS_NUMBER;
+    }
+
+    const isBiggerThanMaxLength = (hashTag) => {
+        return hashTag.length > MAX_HASH_TAG_LENGTH;
+    };
+
+    const isHashTagOnlyWithSharp = (hashTag) => {
+        return hashTag === '#';
+    };
+
+    const isHashTagWithNoSharp = (hashTag) => {
+        return hashTag[0] !== '#' && input.value !== '';
+    };
+
+    const isNoSpacesBetweenHashTags = (hashTag) => {
+        return hashTag.split('#').length - 1 > 1;
+    };
+
+    const isSameHashTags = (hashTag) => {
+        return countHashTags(hashTag) > 1;
+    };
+
+    const checkHashTagsValidity = () => {
+        for (let key in errorState) {
+            errorState[key] = false;
+        };
+
+        errorState.moreThanMaxTagsNumber = errorState.moreThanMaxTagsNumber || isMoreThanMaxTagsMunber(hashTags);
+
+        for (let i=0; i < hashTags.length; i++) {
+            errorState.biggerThanMaxLength = errorState.biggerThanMaxLength || isBiggerThanMaxLength(hashTags[i]);
+            errorState.onlyWithSharp = errorState.onlyWithSharp || isHashTagOnlyWithSharp(hashTags[i]);
+            errorState.withNoSharp = errorState.withNoSharp || isHashTagWithNoSharp(hashTags[i]);
+            errorState.noSpacesBetweenHashTags = errorState.noSpacesBetweenHashTags ||  isNoSpacesBetweenHashTags(hashTags[i]);
+            errorState.sameHashTags = errorState.sameHashTags || isSameHashTags(hashTags[i]);
         };
     };
 
+    const createErrorMesage = () => {
+        let errorMessage = '';
+
+        for (let key in errorState) {
+            if (errorState[key]) {
+                errorMessage = errorMessage + HashTagsErrorName[key];
+            }
+        }
+
+        return errorMessage;
+    };
+
+    const onPostButtonClick = () => {
+        checkHashTagsValidity();
+        uploadPhotoHashTags.setCustomValidity(createErrorMesage());
+    };
+
     uploadPhotoHashTags.addEventListener('change', onHashTagsChange);
-    uploadPhotoOverlayPostButton.addEventListener('click', hashTagsValidityChecking);
+    uploadPhotoOverlayPostButton.addEventListener('click', onPostButtonClick);
 
     // Effect calculation
 

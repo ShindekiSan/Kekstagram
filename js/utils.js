@@ -8,10 +8,10 @@
 
     window.utils = {
         getRandomInteger: function(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+            return Math.floor(Math.random() * (max - min)) + min;
         },
         getRandomElementFromList: function(list) {
-            return list[utils.getRandomInteger(0, list.length - 1)];
+            return list[utils.getRandomInteger(0, list.length)];
         },
         removeElementsFromList: function(list) {
             while (list.firstChild) {

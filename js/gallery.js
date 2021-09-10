@@ -62,8 +62,8 @@
     };
 
     const getPhotos = async () => {
-        let promise = window.backend.downloadData(window.downloadHandlers.SUCCESS, window.downloadHandlers.ERROR);
-        let result = await promise;
+        const promise = window.backend.downloadData(window.downloadHandlers.SUCCESS, window.downloadHandlers.ERROR);
+        const result = await promise;
         photos = photos.concat(result);
         window.appendPhotos(photos);
     };

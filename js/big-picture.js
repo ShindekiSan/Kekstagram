@@ -42,7 +42,7 @@
         photoBigPicture.querySelector('.big-picture__img img').src = picture.url;
         photoBigPicture.querySelector('.likes-count').textContent = picture.likes;
 
-        let commentsAmount = picture.comments.length;
+        const commentsAmount = picture.comments.length;
 
         // Photo Description
 
