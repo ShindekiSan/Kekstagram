@@ -60,6 +60,21 @@
                 filteredPhotos = [...Filter.NEW(window.photos)];
                 break;
         };
-        return filteredPhotos;
+        return filteredPhotos
     };
+
+        
+    const onFilterButtonClick = (evt) => {
+        const photos = window.filterPhotos(evt.target.id);
+        evt.target.classList.add('img-filters__button--active');
+        window.utils.debounce(() => window.appendPhotos(photos));
+    };
+    
+    const setFilterButtonsEventListeners = () => {
+        filterButtons.forEach((button) => {
+            button.addEventListener('click', onFilterButtonClick);
+        });
+    };
+
+    setFilterButtonsEventListeners();
 })();

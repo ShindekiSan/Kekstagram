@@ -12,13 +12,6 @@
     const photosListElementTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
     // Show photos 
-    
-    const getPhotos = async (callback) => {
-        let promise = window.backend.downloadData(window.downloadHandlers.SUCCESS, window.downloadHandlers.ERROR);
-        let result = await promise;
-        photos = photos.concat(result);
-        callback();
-    };
 
     const removePhotosFromPage = () => {
         document.querySelectorAll('.picture').forEach((miniature) => {
@@ -53,12 +46,12 @@
         });      
     };
 
-    const appendPhotos = () => {
+    window.appendPhotos = (photosData) => {
         const photosFragment = document.createDocumentFragment();
 
         removePhotosFromPage();
 
-        photos.forEach((elem, index) => {
+        photosData.forEach((elem, index) => {
             const renderedPicture = renderPhoto(photosListElementTemplate, elem);
             renderedPicture.dataset.number = index;
 
@@ -70,21 +63,12 @@
         setPhotoEventListeners();
     };
 
-    
-    // show filtered photos
-    
-    const onFilterButtonClick = (evt) => {
-        photos = window.filterPhotos(evt.target.id);
-        evt.target.classList.add('img-filters__button--active');
-        window.utils.debounce(appendPhotos);
+    const getPhotos = async () => {
+        let promise = window.backend.downloadData(window.downloadHandlers.SUCCESS, window.downloadHandlers.ERROR);
+        let result = await promise;
+        photos = photos.concat(result);
+        window.appendPhotos(photos);
     };
     
-    const setFilterButtonsEventListeners = () => {
-        filterButtons.forEach((button) => {
-            button.addEventListener('click', onFilterButtonClick);
-        });
-    };
-    
-    getPhotos(appendPhotos);
-    setFilterButtonsEventListeners();
+    getPhotos();
 })();
