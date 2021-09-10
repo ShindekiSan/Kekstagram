@@ -185,6 +185,7 @@
                 hashTags[index] = elem.toLowerCase();
             };
         });
+        console.log(hashTags);
     };
 
     const countHashTags = (hashTag) => {
@@ -215,7 +216,7 @@
         return hashTag === '#';
     };
 
-    const isHashTagWithNoSharp = (hashTag) => {
+    const isHashTagWithNoSharp = (hashTag, input) => {
         return hashTag[0] !== '#' && input.value !== '';
     };
 
@@ -237,7 +238,7 @@
         for (let i=0; i < hashTags.length; i++) {
             errorState.biggerThanMaxLength = errorState.biggerThanMaxLength || isBiggerThanMaxLength(hashTags[i]);
             errorState.onlyWithSharp = errorState.onlyWithSharp || isHashTagOnlyWithSharp(hashTags[i]);
-            errorState.withNoSharp = errorState.withNoSharp || isHashTagWithNoSharp(hashTags[i]);
+            errorState.withNoSharp = errorState.withNoSharp || isHashTagWithNoSharp(hashTags[i], uploadPhotoHashTags);
             errorState.noSpacesBetweenHashTags = errorState.noSpacesBetweenHashTags ||  isNoSpacesBetweenHashTags(hashTags[i]);
             errorState.sameHashTags = errorState.sameHashTags || isSameHashTags(hashTags[i]);
         };
@@ -248,7 +249,7 @@
 
         for (let key in errorState) {
             if (errorState[key]) {
-                errorMessage = errorMessage + HashTagsErrorName[key];
+                errorMessage = errorMessage + HashTagsErrorName[key] + ' ';
             }
         }
 
