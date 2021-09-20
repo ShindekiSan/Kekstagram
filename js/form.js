@@ -106,9 +106,9 @@
         
         if (document.activeElement === uploadPhotoInput) {
             uploadPhotoInput.blur();
-        }
+        };
 
-        currentScalePercentage = parseInt(imageScalePercentage.value);
+        currentScalePercentage = MAX_SCALE_PERCENTAGE;
         uploadImagePreview.style.transform = `scale(${scaleValue})`;
         pinOffset = effectPin.offsetLeft;
         depthWidth = effectDepth.clientWidth;
@@ -123,8 +123,8 @@
     const resetScale = () => {
         imageScalePercentage.value = `${currentScalePercentage}%`;
         scaleValue = currentScalePercentage / SCALE_COEFFICIENT;
-        uploadImagePreview.style.transform = `scale(${scaleValue})` 
-    }
+        uploadImagePreview.style.transform = `scale(${scaleValue})`;
+    };
 
 
     const closeUploadOverlay = () => {
@@ -138,8 +138,8 @@
         effectsRadio.forEach((elem) => {
             if (elem.querySelector('input').checked) {
                 elem.querySelector('input').checked = false;
-            }
-        })
+            };
+        });
 
         document.removeEventListener('keydown', onUploadPhotoOverlayEscPress);
         document.removeEventListener('click', onUploadPhotoOverlayCloseButtonClick);
@@ -206,7 +206,7 @@
 
     const isMoreThanMaxTagsMunber = () => {
         return hashTags.length > MAX_HASH_TAGS_NUMBER;
-    }
+    };
 
     const isBiggerThanMaxLength = (hashTag) => {
         return hashTag.length > MAX_HASH_TAG_LENGTH;
@@ -250,8 +250,8 @@
         for (let key in errorState) {
             if (errorState[key]) {
                 errorMessage = errorMessage + HashTagsErrorName[key] + ' ';
-            }
-        }
+            };
+        };
 
         return errorMessage;
     };
@@ -375,7 +375,7 @@
         window.utils.isEscKey(evt, () => {
             if (document.querySelector('.success')) {
                 document.querySelector('.success').remove();
-            }
+            };
         });
     };
 
@@ -387,7 +387,7 @@
         window.utils.isEscKey(evt, () => {
             if (document.querySelector('.error')) {
                 document.querySelector('.error').remove();
-            }
+            };
         });
     };
 
@@ -423,8 +423,8 @@
         const errorButtons = document.querySelectorAll('.error__button');
 
         document.addEventListener('keydown', onUploadErrorEscPress);
-        errorButtons[0].addEventListener('click', onUploadErrorTryAgainButtonClick)
-        errorButtons[1].addEventListener('click', onUploadErrorUploadNewFileButtonClick)
+        errorButtons[0].addEventListener('click', onUploadErrorTryAgainButtonClick);
+        errorButtons[1].addEventListener('click', onUploadErrorUploadNewFileButtonClick);
     };
 
     uploadForm.addEventListener('submit', (evt) => {

@@ -73,7 +73,8 @@
     
                 maxCommentIndex = Math.min(currentCommentIndex + BIG_PICTURE_NEW_COMMENTS_COUNT, commentsAmount);
                 if (currentCommentIndex === commentsAmount) {
-                    socialCommentsLoader.classList.add('hidden');
+                    socialCommentsLoader.classList.add('visually-hidden');
+                    socialCommentsLoader.removeEventListener('click', onSocialCommentsLoaderClick);
                 };
             };
 
