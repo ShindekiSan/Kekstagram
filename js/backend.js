@@ -56,7 +56,7 @@
             // xhr.responseType = 'json';
 
             // xhr.addEventListener('load', () => {
-            //     if (xhr.status === LOAD_OK) {
+            //     if (xhr.status === 200) {
             //         onLoad(xhr.response);
             //         console.log(xhr.response);
             //     } else {
@@ -79,6 +79,10 @@
 
             const response = await fetch(uploadURL, {
                 method: 'POST',
+                // headers: {
+                //     'Accept': 'application/json',
+                //     'Content-Type': 'multipart/form-data'
+                // },
                 body: data,
             });
 

@@ -14,27 +14,12 @@
     const socialCommentsLoader = photoBigPicture.querySelector('.social__comments-loader');
     const socialCommentsAmount = photoBigPicture.querySelector('.social__comment-count');
     const socialCommentsAmountNumber = socialCommentsAmount.querySelector('.comments-count');
-
-    const closeBigPicture = () => {
-        photoBigPicture.classList.add('hidden');
-
-        document.removeEventListener('keypress', onBigPictureEscPress);
-        bigPictureCloseButton.removeEventListener('click', onBigPictureCloseButtonClick);
-    };
-
-    const onBigPictureCloseButtonClick = () => {
-        closeBigPicture();
-    };
-
-    const onBigPictureEscPress = (evt) => {
-        window.utils.isEscKey(evt, closeBigPicture);
-    };
     
     const showSocialComment = (photoComment) => {
         const newSocialComment = socialComment.cloneNode(true);
         newSocialComment.querySelector('.social__picture').src = photoComment.avatar;
         newSocialComment.querySelector('.social__text').textContent = photoComment.message;
-        return newSocialComment
+        return newSocialComment;
     };
 
     window.showBigPicture = (picture) => {
@@ -51,36 +36,39 @@
         
         socialPhotoDescription.querySelector('.social__caption').textContent = picture.description;
 
+        // Comments section
+
+        const getMaxCommentIndex = (currentIndex, commentsCount) => {
+            return Math.min(currentIndex, commentsCount)
+        }
+
+        const comments = picture.comments;
+
+        let currentCommentIndex;
+        let maxCommentIndex;
+
+        const showMoreComments = () => {
+            const commentsFragment = document.createDocumentFragment();
+            
+            comments.slice(currentCommentIndex, maxCommentIndex).
+            forEach(comment => commentsFragment.appendChild(showSocialComment(comment)));
+
+            socialCommentsSection.appendChild(commentsFragment);
+    
+            currentCommentIndex = maxCommentIndex;
+            socialCommentsAmount.firstChild.textContent = `${currentCommentIndex} из `;
+    
+            maxCommentIndex = getMaxCommentIndex(currentCommentIndex + BIG_PICTURE_NEW_COMMENTS_COUNT, commentsAmount);
+            if (currentCommentIndex === commentsAmount) {
+                socialCommentsLoader.classList.add('visually-hidden');
+                socialCommentsLoader.removeEventListener('click', onSocialCommentsLoaderClick);
+            };
+        };
+
         const showComments = () => {
             window.utils.removeElementsFromList(socialCommentsSection);
 
             socialCommentsAmountNumber.textContent = commentsAmount;
-            const comments = picture.comments;
-
-            let currentCommentIndex = 0;
-            let maxCommentIndex = Math.min(currentCommentIndex + BIG_PICTURE_COMMENTS_COUNT, commentsAmount);
-
-            const showMoreComments = () => {
-                const commentsFragment = document.createDocumentFragment();
-            
-                comments.slice(currentCommentIndex, maxCommentIndex).
-                forEach(comment => commentsFragment.appendChild(showSocialComment(comment)));
-
-                socialCommentsSection.appendChild(commentsFragment);
-    
-                currentCommentIndex = maxCommentIndex;
-                socialCommentsAmount.firstChild.textContent = `${currentCommentIndex} из `;
-    
-                maxCommentIndex = Math.min(currentCommentIndex + BIG_PICTURE_NEW_COMMENTS_COUNT, commentsAmount);
-                if (currentCommentIndex === commentsAmount) {
-                    socialCommentsLoader.classList.add('visually-hidden');
-                    socialCommentsLoader.removeEventListener('click', onSocialCommentsLoaderClick);
-                };
-            };
-
-            const onSocialCommentsLoaderClick = () => {
-                showMoreComments();
-            };
 
             if (commentsAmount <= BIG_PICTURE_COMMENTS_COUNT) {
                 socialCommentsLoader.classList.add('visually-hidden');
@@ -89,10 +77,35 @@
                 socialCommentsLoader.addEventListener('click', onSocialCommentsLoaderClick);
             };
 
+            currentCommentIndex = 0;
+            maxCommentIndex = getMaxCommentIndex(currentCommentIndex + BIG_PICTURE_COMMENTS_COUNT, commentsAmount);
+
+            showMoreComments();
+        };
+
+        const onSocialCommentsLoaderClick = () => {
             showMoreComments();
         };
 
         showComments();
+
+        // Big picture closing
+
+        const closeBigPicture = () => {
+            photoBigPicture.classList.add('hidden');
+    
+            document.removeEventListener('keypress', onBigPictureEscPress);
+            bigPictureCloseButton.removeEventListener('click', onBigPictureCloseButtonClick);
+            socialCommentsLoader.removeEventListener('click', onSocialCommentsLoaderClick);
+        };
+    
+        const onBigPictureCloseButtonClick = () => {
+            closeBigPicture();
+        };
+    
+        const onBigPictureEscPress = (evt) => {
+            window.utils.isEscKey(evt, closeBigPicture);
+        };
 
         document.addEventListener('keydown', onBigPictureEscPress);
         bigPictureCloseButton.addEventListener('click', onBigPictureCloseButtonClick);

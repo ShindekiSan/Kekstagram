@@ -61,7 +61,6 @@
     const uploadForm = document.querySelector('.img-upload__form');
     const uploadPhotoInput = uploadForm.querySelector('.img-upload__input');
     const uploadPhotoOverlay = uploadForm.querySelector('.img-upload__overlay');
-    const uploadPhotoOverlayPostButton = uploadForm.querySelector('.img-upload__submit');
     const uploadPhotoOverlayCloseButton = uploadPhotoOverlay.querySelector('.img-upload__cancel');
 
     const effectLevelPanel = document.querySelector('.img-upload__effect-level');
@@ -70,6 +69,7 @@
     const effectValue = effectLevelPanel.querySelector('.effect-level__value');
     const effectsList = uploadPhotoOverlay.querySelector('.effects__list');
     const effectsRadio = document.querySelectorAll('.effects__item');
+    const effectNone = effectsRadio[0].querySelector('input');
 
     const uploadImagePreview = uploadPhotoOverlay.querySelector('.img-upload__preview')
     const uploadImage = uploadImagePreview.querySelector('img');
@@ -112,6 +112,7 @@
         uploadImagePreview.style.transform = `scale(${scaleValue})`;
         pinOffset = effectPin.offsetLeft;
         depthWidth = effectDepth.clientWidth;
+        effectNone.checked = true;
     
         document.addEventListener('keydown', onUploadPhotoOverlayEscPress);
         uploadPhotoOverlayCloseButton.addEventListener('click', onUploadPhotoOverlayCloseButtonClick);
@@ -244,7 +245,7 @@
         };
     };
 
-    const createErrorMesage = () => {
+    const createErrorMessage = () => {
         let errorMessage = '';
 
         for (let key in errorState) {
@@ -256,13 +257,23 @@
         return errorMessage;
     };
 
-    const onPostButtonClick = () => {
+    // const onPostButtonClick = () => {
+        
+    // };
+
+    const isHashTagsValid = () => {
         checkHashTagsValidity();
-        uploadPhotoHashTags.setCustomValidity(createErrorMesage());
-    };
+
+        for (let key in errorState) {
+            if (errorState[key]) {
+                return false;
+            };
+        };
+
+        return true;
+    }
 
     uploadPhotoHashTags.addEventListener('change', onHashTagsChange);
-    uploadPhotoOverlayPostButton.addEventListener('click', onPostButtonClick);
 
     // Effect calculation
 
@@ -428,8 +439,14 @@
     };
 
     uploadForm.addEventListener('submit', (evt) => {
-        window.backend.uploadData(new FormData(uploadForm), successHandler, errorHandler);
+        const validityResult =  isHashTagsValid();
         evt.preventDefault();
+        if (!validityResult) {
+            uploadPhotoHashTags.setCustomValidity(createErrorMessage());
+            return false;
+        } else {
+            window.backend.uploadData(new FormData(uploadForm), successHandler, errorHandler);
+        };
     });
-    
+
 })();
