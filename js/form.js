@@ -51,7 +51,6 @@
     let currentEffectLevel = 0;
     let currentEffect = 'none';
     let currentEffectPinPosition = MAX_EFFECT_POSITION;
-    let pinOffset = 0;
     let depthWidth = 0;
     let scaleValue = 1;
     let currentScalePercentage = 0;
@@ -65,6 +64,7 @@
 
     const effectLevelPanel = document.querySelector('.img-upload__effect-level');
     const effectPin = effectLevelPanel.querySelector('.effect-level__pin');
+    const effectLevelLine = effectLevelPanel.querySelector('.effect-level__line');
     const effectDepth = effectLevelPanel.querySelector('.effect-level__depth');
     const effectValue = effectLevelPanel.querySelector('.effect-level__value');
     const effectsList = uploadPhotoOverlay.querySelector('.effects__list');
@@ -110,8 +110,6 @@
 
         currentScalePercentage = MAX_SCALE_PERCENTAGE;
         uploadImagePreview.style.transform = `scale(${scaleValue})`;
-        pinOffset = effectPin.offsetLeft;
-        depthWidth = effectDepth.clientWidth;
         effectNone.checked = true;
     
         document.addEventListener('keydown', onUploadPhotoOverlayEscPress);
@@ -292,14 +290,14 @@
                 else {
                     if (elem.querySelector('input').getAttribute('value') !== currentEffect && elem.querySelector('input').getAttribute('value') !== 'none') {
                         if (effectLevelPanel.classList.contains('visually-hidden')) {
-                            effectLevelPanel.classList.remove('visually-hidden');
+                            effectLevelPanel.classList.remove('visually-hidden'); 
                         }
                         currentEffect = elem.querySelector('input').getAttribute('value');
                         if (currentEffectPinPosition !== MAX_EFFECT_POSITION) {
                             currentEffectPinPosition  = MAX_EFFECT_POSITION;
                         };
-                        effectPin.style.left = pinOffset + 'px';
-                        effectDepth.style.width = depthWidth + 'px';
+                        effectPin.style.left = `${MAX_EFFECT_POSITION}%`
+                        effectDepth.style.width = `${MAX_EFFECT_POSITION}%`
                         effectLevel();
                         effectValue.setAttribute('value', `${EFFECTS[currentEffect].filterName}(${EFFECTS[currentEffect].maxValue})`);
                     };
@@ -324,11 +322,12 @@
         evt.preventDefault();
         let pinCoords = evt.clientX;
 
-        const onPinMouseMove = (moveEvt) => {
-            moveEvt.preventDefault();
-            let pinShift = pinCoords - moveEvt.clientX;
+        const setEffectOptions = (evt) => {
+            evt.preventDefault();
+            let pinShift = pinCoords - evt.clientX;
+            const maxLeft = effectLevelLine.offsetWidth;
 
-            pinCoords = moveEvt.clientX;
+            pinCoords = evt.clientX;
 
             let currentOffset = effectPin.offsetLeft - pinShift;
             let currentDepthWidth = effectDepth.clientWidth - pinShift;
@@ -338,37 +337,26 @@
             if (currentOffset < 0) {
                 effectPin.style.left = '0px';
                 effectDepth.style.width = '0px';
-            } else if (currentOffset > pinOffset) {
-                effectPin.style.left = pinOffset + 'px';
+            } else if (currentOffset > maxLeft) {
+                effectPin.style.left = maxLeft + 'px';
                 effectDepth.style.width = depthWidth + 'px';
-                currentOffset = pinOffset;
+                currentOffset = maxLeft;
                 currentDepthWidth = depthWidth;
             };
 
-            currentEffectPinPosition = currentOffset / (pinOffset / MAX_EFFECT_POSITION);
+            currentEffectPinPosition = currentOffset / (maxLeft / MAX_EFFECT_POSITION);
             effectLevel();
             setEffect();
 
-            effectValue.setAttribute('value',`${uploadImage.style.filter}`);
+            effectValue.setAttribute('value',`${uploadImage.style.filter}`)
+        }
+
+        const onPinMouseMove = (moveEvt) => {
+            setEffectOptions(moveEvt)
         };
 
         const onPinMouseUp = (moveEvt) => {
-            moveEvt.preventDefault();
-            let pinShift = pinCoords - moveEvt.clientX;
-
-            pinCoords = moveEvt.clientX;
-
-            let currentOffset = effectPin.offsetLeft - pinShift;
-            let currentDepthWidth = effectDepth.clientWidth - pinShift;
-
-            effectPin.style.left = currentOffset + 'px';
-            effectDepth.style.width = currentDepthWidth + 'px';
-
-            currentEffectPinPosition = currentOffset / (pinOffset / MAX_EFFECT_POSITION);
-            effectLevel();
-            setEffect();
-
-            effectValue.setAttribute('value',`${uploadImage.style.filter}`);
+            setEffectOptions(moveEvt);
 
             document.removeEventListener('mousemove', onPinMouseMove);
             document.removeEventListener('mouseup', onPinMouseUp);
@@ -448,5 +436,4 @@
             window.backend.uploadData(new FormData(uploadForm), successHandler, errorHandler);
         };
     });
-
 })();
